@@ -16,6 +16,8 @@ from direct.showbase.ShowBase import ShowBase
 from direct.showbase import DirectObject
 from direct.task import Task
 
+from panda3d.core import Material
+
 
 class Win(ShowBase):
     def __init__(self):
@@ -25,8 +27,23 @@ class Win(ShowBase):
         self.start()
 
     def start(self):
+
+        # Disable camera mouse control
+        # https://www.panda3d.org/manual/index.php/The_Default_Camera_Driver
+        self.disableMouse()
+
+        # Keyboard and Mouse camera control
+        # self.useDrive()
+
+        # Trackball camera control
+        self.useTrackball()
+
+        # TODO
+        # Out of Body Experience camera control
+        # self.oobe()
+
         self.load_Environment()
-        # self.adjust_Camera()
+        self.adjust_Camera()
         self.load_Player()
 
         self.update()
@@ -38,16 +55,27 @@ class Win(ShowBase):
     def adjust_Camera(self):
         print("Adjusting view port ...")
         self.camera.setPos(10, 10, 10)
+        self.camera.setHpr(55, 0, 135)
 
     def load_Environment(self):
         print("Loading evironment models ...")
 
-        self.ground = self.loader.loadModel(
+        self.ground_object = self.loader.loadModel(
                            "assets/models/environment/plane.egg")
 
-        self.ground.setScale(100, 100, 100)
-        self.ground.setPos(-8, 42, 0)
+        self.ground_object.reparentTo(self.render)
+
+        self.ground_object.setScale(1, 1, 1)
+        self.ground_object.setPos(0, 0, 0)
         # self.ground.setHpr(0, 0, 0)
+
+        self.ground_material = Material()
+        self.ground_material.setShininess(0.0)
+        self.ground_material.setAmbient((0, 0, 1, 1))
+        print("DEBUG: in load_Environment: if ground_material.hasAmbient() {}".format(self.ground_material.hasAmbient()))
+        print("DEBUG: in load_Environment: if ground_material.hasEmission() {}".format(self.ground_material.hasEmission()))
+
+        self.ground_object.setMaterial(self.ground_material)
 
         # TODO:
         # Trees and rocks
