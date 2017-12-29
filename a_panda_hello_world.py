@@ -63,8 +63,6 @@ class Win(ShowBase):
         self.ground_object = self.loader.loadModel(
                            "assets/models/environment/plane.egg")
 
-        self.ground_object.reparentTo(self.render)
-
         self.ground_object.setScale(1, 1, 1)
         self.ground_object.setPos(0, 0, 0)
         # self.ground.setHpr(0, 0, 0)
@@ -77,8 +75,8 @@ class Win(ShowBase):
 
         self.ground_object.setMaterial(self.ground_material)
 
-        # TODO:
-        # Trees and rocks
+        # Always last
+        self.ground_object.reparentTo(self.render)
 
     def load_Player(self):
         print("Loading player ...")
