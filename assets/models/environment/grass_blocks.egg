@@ -1,0 +1,15 @@
+<CoordinateSystem> { Y-Up-Left }
+
+<Comment> {
+  "x2egg grass5.blend.x grass.egg"
+}
+<Group> Root {
+  <Transform> {
+    <Matrix4> {
+      1 0 0 0
+      0 0 1 0
+      0 1 0 0
+      0 0 0 1
+    }
+  }
+}

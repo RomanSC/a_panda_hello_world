@@ -1,0 +1,48 @@
+<CoordinateSystem> { Y-Up-Left }
+
+<Comment> {
+  "x2egg plane.blend.x plane.egg"
+}
+<Group> Root {
+  <Transform> {
+    <Matrix4> {
+      1 0 0 0
+      0 0 1 0
+      0 1 0 0
+      0 0 0 1
+    }
+  }
+  <Group> Plane {
+    <Transform> {
+      <Matrix4> {
+        -8.04991 0 0 0
+        0 -8.04991 0 0
+        0 0 -8.04991 0
+        0 0 0 1
+      }
+    }
+    <Group> {
+      <VertexPool> vpool1 {
+        <Vertex> 0 {
+          8.04991 0 8.04991
+          <Normal> { 0 -1 0 }
+        }
+        <Vertex> 1 {
+          -8.04991 0 8.04991
+          <Normal> { 0 -1 0 }
+        }
+        <Vertex> 2 {
+          -8.04991 0 -8.04991
+          <Normal> { 0 -1 0 }
+        }
+        <Vertex> 3 {
+          8.04991 0 -8.04991
+          <Normal> { 0 -1 0 }
+        }
+      }
+      <Polygon> {
+        <VertexRef> { 0 1 2 3 <Ref> { vpool1 } }
+      }
+    }
+  }
+}
