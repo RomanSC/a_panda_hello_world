@@ -38,6 +38,7 @@ from panda3d.core import PandaNode
 from panda3d.core import NodePath
 from panda3d.core import Camera
 
+from pandac.PandaModules import WindowProperties
 
 class Win(ShowBase):
     def __init__(self):
@@ -48,13 +49,16 @@ class Win(ShowBase):
 
         # Disable camera mouse control
         # https://www.panda3d.org/manual/index.php/The_Default_Camera_Driver
-        self.disableMouse()
+        # self.disableMouse()
+
+
+        self.props = WindowProperties()
 
         # Keyboard and Mouse camera control
         # self.useDrive()
 
         # Trackball camera control
-        self.useTrackball()
+        # self.useTrackball()
 
         # TODO
         # Out of Body Experience camera control
@@ -62,7 +66,8 @@ class Win(ShowBase):
 
         self.load_Sun()
         self.load_Environment()
-        self.adjust_Camera()
+        self.set_camera_Task()
+        self.mouse_and_cursor()
         self.load_Player()
         # self.load_Keys()
 
@@ -75,11 +80,25 @@ class Win(ShowBase):
         # TODO
         # Add some task manager
         self.taskMgr.add(self.camera_text_Task, "camera_text_Task")
+        self.taskMgr.add(self.camera_follow_Player, "camera_follow_Player")
 
-    def adjust_Camera(self):
+    def camera_follow_Player(self, task):
+        player_pos = self.player.getPos()
+        print("DEBUG: Player position: {} {} {}".format(player_pos[0],
+                                                        player_pos[1],
+                                                        player_pos[2]))
+        self.camera.setPos((player_pos[0] + 0),
+                           (player_pos[1] + 0),
+                           (player_pos[2] + 0.10))
+
+        self.camera.setHpr(45, 0, 0)
+
+        return task.cont
+
+    def set_camera_Task(self):
         print("DEBUG: Adjusting view port ...")
-        self.camera.setPos(10, 10, 10)
-        self.camera.setHpr(55, 0, 135)
+        # self.camera.setPos(10, 10, 10)
+        # self.camera.setHpr(55, 0, 135)
 
         self.camera_text_pos = (0, 0.90, 0)
         self.camera_info_text = OnscreenText(text="pos:{} hpr:{}".format(
@@ -87,6 +106,15 @@ class Win(ShowBase):
                                 self.camera.getHpr()),
                                 pos=self.camera_text_pos)
         print("DEBUG: DONE!")
+
+    def mouse_and_cursor(self):
+        # Disable mouse camera control
+        self.disableMouse()
+
+        self.props.setCursorHidden(False)
+
+        self.props = WindowProperties()
+        self.win.requestProperties(self.props)
 
     # TODO:
     # Create GUI for editing camera position and snapping to follow the player
@@ -158,13 +186,13 @@ class Win(ShowBase):
 
         # self.player_model = "assets/models/figures/gray_boy.egg"
 
-        # self.player_object = self.loader.loadModel(self.player_model)
+        # self.player = self.loader.loadModel(self.player_model)
 
-        # self.player_object.setScale(self.player_scale["a"],
+        # self.player.setScale(self.player_scale["a"],
                     #                 self.player_scale["b"],
                     #                 self.player_scale["c"])
 
-        # self.player_object.setPos(self.player_position["a"],
+        # self.player.setPos(self.player_position["a"],
                     #               self.player_position["b"],
                     #               self.player_position["c"])
 
@@ -172,9 +200,9 @@ class Win(ShowBase):
         # # self.player_material.setShininess(0.0)
         # # self.player_material.setDiffuse((1.0, 1.0, 1.0, 1.0))
 
-        # # self.player_object.setMaterial(self.player_material)
+        # # self.player.setMaterial(self.player_material)
 
-        # self.player_object.reparentTo(self.render)
+        # self.player.reparentTo(self.render)
         # print("DEBUG: DONE!")
         self.player_scale = player_scale
         self.player_position = player_position
