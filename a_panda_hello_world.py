@@ -82,8 +82,15 @@ class Win(ShowBase):
         self.taskMgr.add(self.camera_text_Task, "camera_text_Task")
         self.taskMgr.add(self.camera_follow_Player, "camera_follow_Player")
 
-        self.taskMgr.add(self.accept(wheel_up, self.zoom_camera(True)))
-        self.taskMgr.add(self.accept(wheel_down, self.zoom_camera(False)))
+        # self.taskMgr.add(self.accept("wheel_up",
+        #                              self.zoom_camera,
+        #                              extraArgs=[True]))
+
+        # self.taskMgr.add(self.accept("wheel_down",
+        #                              self.zoom_camera,
+        #                              extraArgs=[False]))
+
+        self.taskMgr.add(self.camera_zoom_Task, "camera_zoom_Task")
 
     def camera_follow_Player(self, task):
         player_pos = self.player.getPos()
@@ -130,15 +137,21 @@ class Win(ShowBase):
 
         return task.cont
 
-    def zoom_camera(self, iftrueup_elsedown):
-        if iftrueup_elsedown:
+    def camera_zoom_Task(self, task):
+        def zoom_in():
             self.camera.setPos((self.camera.getPos()[0]),
                                (self.camera.getPos()[1] + 1),
                                (self.camera.getPos()[2]),)
-        else:
+
+        def zoom_out():
             self.camera.setPos((self.camera.getPos()[0]),
                                (self.camera.getPos()[1] - 1),
                                (self.camera.getPos()[2]),)
+
+        self.accept("wheel_up", zoom_in)
+        self.accept("wheel_down", zoom_out)
+
+        return task.cont
 
     def load_Sun(self):
         print("DEBUG: Loading Sun ... ")
