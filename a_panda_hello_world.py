@@ -71,7 +71,7 @@ class Win(ShowBase):
         self.mouse_and_cursor()
         self.load_Player()
         self.initialize_Camera()
-        # self.load_Keys()
+        self.load_Keys()
 
         self.init_Updates()
 
@@ -318,17 +318,7 @@ class Win(ShowBase):
         # camera_Node becomes a child of player_Node in
         # self.initialize_Camera
 
-    # def load_Keys(self):
-    #     self.accept('escape', sys.exit)
-
-        # self.accept("wheel_up",
-        #             self.camera_Controller,
-        #             extraArgs=[int(self.camera_zoom_increment)])
-
-        # self.accept("wheel_down",
-        #             self.camera_Controller,
-        #             extraArgs=[int(-abs(self.camera_zoom_increment))])
-
+    def load_Keys(self):
         self.accept("w", self.move_player_Forward)
         self.accept("a", self.rotate_player_Left)
         self.accept("s", self.move_player_Backward)
