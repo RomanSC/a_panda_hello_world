@@ -66,7 +66,7 @@ class Win(ShowBase):
 
         self.load_Sun()
         self.load_Environment()
-        self.set_camera_Task()
+        self.set_camera_OnscreenText()
         self.mouse_and_cursor()
         self.load_Player()
         # self.load_Keys()
@@ -98,7 +98,7 @@ class Win(ShowBase):
 
         return task.cont
 
-    def set_camera_Task(self):
+    def set_camera_OnscreenText(self):
         print("DEBUG: Adjusting view port ...")
         # self.camera.setPos(10, 10, 10)
         # self.camera.setHpr(55, 0, 135)
