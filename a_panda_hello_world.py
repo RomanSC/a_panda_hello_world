@@ -69,7 +69,7 @@ class Win(ShowBase):
         self.set_camera_OnscreenText()
         self.mouse_and_cursor()
         self.load_Player()
-        self.load_camera_Settings()
+        self.initialize_Camera()
         self.load_Keys()
 
         self.init_Updates()
@@ -77,7 +77,6 @@ class Win(ShowBase):
         self.start_done = True
 
     def init_Updates(self):
-        pass
         # TODO
         # Add some task manager
         self.taskMgr.add(self.camera_text_Task,
@@ -131,10 +130,18 @@ class Win(ShowBase):
 
         return task.cont
 
-    def load_camera_Settings(self):
-        self.camera_zoom_level = 0
+    # TODO:
+    # make camera a child of the player actor
+
+
+    def initialize_Camera(self):
+        self.camera.setPos(self.player_position[0],
+                           self.player_position[1] - 16,
+                           self.player_position[2] + 8)
+
+        self.camera_zoom_level = 10
         self.camera_zoom_increment = 1
-        self.camera_zoom_range = (-10, -32)  # in front and behind player, in
+        self.camera_zoom_range = (-32, -42)  # in front and behind player, in
                                              # that order
 
     def camera_Controller(self, a):
@@ -143,17 +150,15 @@ class Win(ShowBase):
 
         x = self.player_position[0]
         y = self.player_position[1] + self.camera_zoom_level
-        z = self.player_position[2] + 2
+        z = self.player_position[2] + 8
 
         if y > self.camera_zoom_range[0]:
-        # if y > 10:
-            print("DEBUG: {} > self.camera_zoom_range[0]".format(y))
+            # print("DEBUG: {} > self.camera_zoom_range[0]".format(y))
             y = self.camera_zoom_range[0]
             self.camera_zoom_level = self.camera_zoom_range[0]
 
         elif y < self.camera_zoom_range[1]:
-        # if y < -32:
-            print("DEBUG: {} < self.camera_zoom_range[0]".format(y))
+            # print("DEBUG: {} < self.camera_zoom_range[0]".format(y))
             y = self.camera_zoom_range[1]
             self.camera_zoom_level = self.camera_zoom_range[1]
 
@@ -164,9 +169,9 @@ class Win(ShowBase):
         #               self.camera_zoom_level))
 
         # Rotation
-        self.camera.setHpr(self.player_hpr[0],
-                           self.player_hpr[1],
-                           self.player_hpr[2])
+        # self.camera.setHpr(self.player_hpr[0],
+        #                    self.player_hpr[1] - 25,
+        #                    self.player_hpr[2])
 
     # def camera_controller_Task(self, task):
     #     # def zoom(a):
@@ -228,23 +233,60 @@ class Win(ShowBase):
         self.ground_object.reparentTo(self.render)
         print("DEBUG: DONE!")
 
-    # store self.player.getPos() output in self.player_position
-    # once every frame for less function calls than calling within
-    # other methods sometimes multiple times, hopefully
-    # performance preserving
+    # def test_rotate_Player(self, task):
+    #     self.player.setHpr(self.player_hpr[0] + 1, # Z, up/down axis
+    #                        self.player_hpr[1],
+    #                        self.player_hpr[2])
 
-    def test_rotate_Player(self, task):
-        self.player.setHpr(self.player_hpr[0] + 1, # Z, up/down axis
-                           self.player_hpr[1],
-                           self.player_hpr[2])
-
-        return task.cont
+    #     return task.cont
 
     def track_player_PositionRotation(self, task):
+        # Player position set once a frame
+        # rather than many times within
+        # multiple function calls
         self.player_position = self.player.getPos()
         self.player_hpr = self.player.getHpr()
 
+
         return task.cont
+
+    def rotate_player_Left(self):
+        self.player.setHpr(self.player_hpr[0],
+                           self.player_hpr[0],
+                           self.player_hpr[0] + 1)
+
+    def rotate_player_Right(self):
+        self.player.setHpr(self.player_hpr[0],
+                           self.player_hpr[0],
+                           self.player_hpr[0] - 1)
+
+    # def move_player(w=False,
+    #                 a=False,
+    #                 s=False,
+    #                 d=False):
+
+    #     # Move forward
+    #     if w:
+    #         self.player.setPos(self.player_hpr[0],
+    #                            self.player_hpr[0],
+    #                            self.player_hpr[0])
+
+    #     # Rotate left
+    #     if a:
+    #         self.player.setPos(self.player_position[0] + 1,
+    #                            self.player_position[0],
+    #                            self.player_position[0])
+
+    #     # Move back
+    #     if s:
+    #         self.player.setPos(self.player_position[0] - 1,
+    #                            self.player_position[0],
+    #                            self.player_position[0])
+
+    #     # Rotate right
+    #     if d:
+    #         pass
+
 
     def load_Player(self):
         print("DEBUG: Loading player ... ")
@@ -293,6 +335,8 @@ class Win(ShowBase):
         self.player_camera_rot.setZ(2.0)
 
     def load_Keys(self):
+        self.accept('escape', sys.exit)
+
         self.accept("wheel_up",
                     self.camera_Controller,
                     extraArgs=[int(self.camera_zoom_increment)])
@@ -301,10 +345,10 @@ class Win(ShowBase):
                     self.camera_Controller,
                     extraArgs=[int(-abs(self.camera_zoom_increment))])
 
-        # self.accept("w", self.player_move, extraArgs=[])
-        # self.accept("a", self.player_move, extraArgs=[])
-        # self.accept("s", self.player_move, extraArgs=[])
-        # self.accept("d", self.player_move, extraArgs=[])
+        # self.accept("w", self.move_player, extraArgs=[w=True])
+        # self.accept("a", self.rotate_player_Left)
+        # self.accept("s", self.move_player, extraArgs=[s=True])
+        # self.accept("d", self.rotate_player_Right)
 
 def main():
     win = Win()
