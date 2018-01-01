@@ -69,7 +69,8 @@ class Win(ShowBase):
         self.set_camera_OnscreenText()
         self.mouse_and_cursor()
         self.load_Player()
-        # self.load_Keys()
+        self.load_Keys()
+        self.load_CameraVars()
 
         self.init_Updates()
 
@@ -80,7 +81,7 @@ class Win(ShowBase):
         # TODO
         # Add some task manager
         self.taskMgr.add(self.camera_text_Task, "camera_text_Task")
-        self.taskMgr.add(self.camera_follow_Player, "camera_follow_Player")
+        # self.taskMgr.add(self.camera_follow_Player, "camera_follow_Player")
 
         # self.taskMgr.add(self.accept("wheel_up",
         #                              self.zoom_camera,
@@ -90,20 +91,21 @@ class Win(ShowBase):
         #                              self.zoom_camera,
         #                              extraArgs=[False]))
 
-        self.taskMgr.add(self.camera_zoom_Task, "camera_zoom_Task")
+        self.taskMgr.add(self.track_player_Position, "track_player_Position")
+        # self.taskMgr.add(self.camera_controller_Task, "camera_controller_Task")
 
-    def camera_follow_Player(self, task):
-        player_pos = self.player.getPos()
-        print("DEBUG: Player position: {} {} {}".format(player_pos[0],
-                                                        player_pos[1],
-                                                        player_pos[2]))
-        self.camera.setPos((player_pos[0] + 0),
-                           (player_pos[1] + 0),
-                           (player_pos[2] + 0.10))
+    # def camera_follow_Player(self, task):
+    #     player_pos = self.player.getPos()
+    #     print("DEBUG: Player position: {} {} {}".format(player_pos[0],
+    #                                                     player_pos[1],
+    #                                                     player_pos[2]))
+    #     self.camera.setPos((player_pos[0] + 0),
+    #                        (player_pos[1] + 0),
+    #                        (player_pos[2] + 0.10))
 
-        self.camera.setHpr(45, 0, 0)
+    #     self.camera.setHpr(45, 0, 0)
 
-        return task.cont
+    #     return task.cont
 
     def set_camera_OnscreenText(self):
         print("DEBUG: Adjusting view port ...")
@@ -137,21 +139,32 @@ class Win(ShowBase):
 
         return task.cont
 
-    def camera_zoom_Task(self, task):
-        def zoom_in():
-            self.camera.setPos((self.camera.getPos()[0]),
-                               (self.camera.getPos()[1] + 1),
-                               (self.camera.getPos()[2]),)
+    def load_CameraVars(self):
+        self.camera_zoom_level = 0
 
-        def zoom_out():
-            self.camera.setPos((self.camera.getPos()[0]),
-                               (self.camera.getPos()[1] - 1),
-                               (self.camera.getPos()[2]),)
+    def zoom(self, a):
+        self.camera_zoom_level += a
 
-        self.accept("wheel_up", zoom_in)
-        self.accept("wheel_down", zoom_out)
+        a = 0
+        b = self.player_position[1] + self.camera_zoom_level
+        c = 0
 
-        return task.cont
+        set_cam_pos = (a, b, c)
+
+        self.camera.setPos(set_cam_pos[0],
+                           set_cam_pos[1],
+                           set_cam_pos[2])
+
+    # def camera_controller_Task(self, task):
+    #     # def zoom(a):
+    #     #     self.camera.setPos((self.player_position[0]),
+    #     #                        (self.player_position[0] + a),
+    #     #                        (self.player_position[0]))
+
+    #     self.accept("wheel_up", self.zoom(-1))
+    #     self.accept("wheel_down", self.zoom(1))
+
+    #     return task.cont
 
     def load_Sun(self):
         print("DEBUG: Loading Sun ... ")
@@ -202,9 +215,16 @@ class Win(ShowBase):
         self.ground_object.reparentTo(self.render)
         print("DEBUG: DONE!")
 
-    def load_Player(self,
-                    player_scale={"a": 0, "b": 0, "c": 0},
-                    player_position={"a": 0, "b": 0, "c": 0}):
+    # store self.player.getPos() output in self.player_position
+    # once every frame for less function calls than calling within
+    # other methods sometimes multiple times, hopefully
+    # performance preserving
+    def track_player_Position(self, task):
+        self.player_position = self.player.getPos()
+
+        return task.cont
+
+    def load_Player(self):
         print("DEBUG: Loading player ... ")
 
         # self.player_scale = player_scale
@@ -230,8 +250,8 @@ class Win(ShowBase):
 
         # self.player.reparentTo(self.render)
         # print("DEBUG: DONE!")
-        self.player_scale = player_scale
-        self.player_position = player_position
+        self.player_scale = (0, 0, 0)
+        self.player_position = (0, 0, 0)
 
         self.player = Actor("assets/models/figures/gray_boy.egg",
                             {"run": "assets/models/figures/gray_boy.egg",
@@ -241,42 +261,18 @@ class Win(ShowBase):
 
         self.player.setScale(0.2)
 
-        self.player.setPos(self.player_position["a"],
-                           self.player_position["b"],
-                           self.player_position["c"])
+        self.player.setPos(self.player_position[0],
+                           self.player_position[1],
+                           self.player_position[2])
 
         # Floating empty object 2 units above the player for the camera to point at
         self.player_camera_rot = NodePath(PandaNode("player_camera_rot"))
         self.player_camera_rot.reparentTo(self.player)
         self.player_camera_rot.setZ(2.0)
 
-    # def load_Keys(self):
-    #     self.accept("escape", sys.exit)
-    #     self.accept("arrow_left", self.setKey, ["left", True])
-    #     self.accept("arrow_right", self.setKey, ["right", True])
-    #     self.accept("arrow_up", self.setKey, ["forward", True])
-    #     self.accept("a", self.setKey, ["cam-left", True])
-    #     self.accept("s", self.setKey, ["cam-right", True])
-    #     self.accept("arrow_left-up", self.setKey, ["left", False])
-    #     self.accept("arrow_right-up", self.setKey, ["right", False])
-    #     self.accept("arrow_up-up", self.setKey, ["forward", False])
-    #     self.accept("a-up", self.setKey, ["cam-left", False])
-    #     self.accept("s-up", self.setKey, ["cam-right", False])
-
-
-    # def spin_Camera_Task(self, task):
-    #     print("Spinning Camera ...")
-
-    #     angleDegrees = task.time * 6.0
-    #     angleRadians = angleDegrees * (pi / 180.0)
-
-    #     self.camera.setPos(20 * sin(angleRadians),
-    #                        -20.0 * cos(angleRadians),
-    #                        3)
-
-    #     self.camera.setHpr(angleDegrees, 0, 0)
-
-    #     return Task.cont
+    def load_Keys(self):
+        self.accept("wheel_up", self.zoom, extraArgs=[1])
+        self.accept("wheel_down", self.zoom, extraArgs=[-1])
 
 def main():
     win = Win()
