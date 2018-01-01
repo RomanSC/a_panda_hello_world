@@ -22,6 +22,7 @@ from math import pi
 
 from direct.showbase.ShowBase import ShowBase
 from direct.showbase import DirectObject
+from direct.showbase.InputStateGlobal import inputState
 from direct.task import Task
 from direct.actor.Actor import Actor
 from direct.gui.OnscreenText import OnscreenText
@@ -70,7 +71,7 @@ class Win(ShowBase):
         self.mouse_and_cursor()
         self.load_Player()
         self.initialize_Camera()
-        self.load_Keys()
+        # self.load_Keys()
 
         self.init_Updates()
 
@@ -81,19 +82,10 @@ class Win(ShowBase):
         # Add some task manager
         self.taskMgr.add(self.camera_text_Task,
                          "camera_text_Task")
-        # self.taskMgr.add(self.camera_follow_Player, "camera_follow_Player")
 
-        # self.taskMgr.add(self.accept("wheel_up",
-        #                              self.zoom_camera,
-        #                              extraArgs=[True]))
-
-        # self.taskMgr.add(self.accept("wheel_down",
-        #                              self.zoom_camera,
-        #                              extraArgs=[False]))
 
         self.taskMgr.add(self.track_player_PositionRotation,
                          "track_player_PositionRotation")
-        # self.taskMgr.add(self.camera_controller_Task, "camera_controller_Task")
 
         # self.taskMgr.add(self.test_rotate_Player,
         #                  "test_rotate_Player")
@@ -133,56 +125,78 @@ class Win(ShowBase):
     # TODO:
     # make camera a child of the player actor
 
-
     def initialize_Camera(self):
-        self.camera.setPos(self.player_position[0],
-                           self.player_position[1] - 16,
-                           self.player_position[2] + 8)
+        # TODO:
+        # https://www.panda3d.org/forums/viewtopic.php?t=1319
 
-        self.camera_zoom_level = 10
-        self.camera_zoom_increment = 1
-        self.camera_zoom_range = (-32, -42)  # in front and behind player, in
-                                             # that order
+        # Player/Camera Node Setup
 
-    def camera_Controller(self, a):
-        # Zoom on scroll
-        self.camera_zoom_level += a
+        # <self.render>
+        # |-<player>
+        #   |-<player_dummy_node>
+        #     |-<camera_dummy_node>
+        #       |-camera
 
-        x = self.player_position[0]
-        y = self.player_position[1] + self.camera_zoom_level
-        z = self.player_position[2] + 8
+        self.camera_Node = self.render.attachNewNode("camera_Node")
 
-        if y > self.camera_zoom_range[0]:
-            # print("DEBUG: {} > self.camera_zoom_range[0]".format(y))
-            y = self.camera_zoom_range[0]
-            self.camera_zoom_level = self.camera_zoom_range[0]
+        self.camera_Node.setPos(0, 0, 0)
+        self.camera_Node.setHpr(0, 0, 0)
 
-        elif y < self.camera_zoom_range[1]:
-            # print("DEBUG: {} < self.camera_zoom_range[0]".format(y))
-            y = self.camera_zoom_range[1]
-            self.camera_zoom_level = self.camera_zoom_range[1]
+        self.camera.reparentTo(self.camera_Node)
+        self.camera_Node.reparentTo(self.player_Node)
 
-        self.camera.setPos(x, y, z)
+        self.camera.setPos(0, -35, 18)  # X=left/right, Y=zoom, Z=Up/down.
+        self.camera.setHpr(0, -25, 0)   # Heading, pitch, roll.
 
-        # print("DEBUG:\nself.player_position = {}\nself.camera_zoom_level = {}"
-        #       .format(self.player_position,
-        #               self.camera_zoom_level))
+    # def initialize_Camera(self):
+    #     self.camera.setPos(self.player_position[0],
+    #                        self.player_position[1] - 16,
+    #                        self.player_position[2] + 8)
 
-        # Rotation
-        # self.camera.setHpr(self.player_hpr[0],
-        #                    self.player_hpr[1] - 25,
-        #                    self.player_hpr[2])
+    #     self.camera_zoom_level = 10
+    #     self.camera_zoom_increment = 1
+    #     self.camera_zoom_range = (-32, -42)  # in front and behind player, in
+    #                                          # that order
 
-    # def camera_controller_Task(self, task):
-    #     # def zoom(a):
-    #     #     self.camera.setPos((self.player_position[0]),
-    #     #                        (self.player_position[0] + a),
-    #     #                        (self.player_position[0]))
+    # def camera_Controller(self, a):
+    #     # Zoom on scroll
+    #     self.camera_zoom_level += a
 
-    #     self.accept("wheel_up", self.zoom(-1))
-    #     self.accept("wheel_down", self.zoom(1))
+    #     x = self.player_position[0]
+    #     y = self.player_position[1] + self.camera_zoom_level
+    #     z = self.player_position[2] + 8
 
-    #     return task.cont
+    #     if y > self.camera_zoom_range[0]:
+    #         # print("DEBUG: {} > self.camera_zoom_range[0]".format(y))
+    #         y = self.camera_zoom_range[0]
+    #         self.camera_zoom_level = self.camera_zoom_range[0]
+
+    #     elif y < self.camera_zoom_range[1]:
+    #         # print("DEBUG: {} < self.camera_zoom_range[0]".format(y))
+    #         y = self.camera_zoom_range[1]
+    #         self.camera_zoom_level = self.camera_zoom_range[1]
+
+    #     self.camera.setPos(x, y, z)
+
+    #     # print("DEBUG:\nself.player_position = {}\nself.camera_zoom_level = {}"
+    #     #       .format(self.player_position,
+    #     #               self.camera_zoom_level))
+
+    #     # Rotation
+    #     # self.camera.setHpr(self.player_hpr[0],
+    #     #                    self.player_hpr[1] - 25,
+    #     #                    self.player_hpr[2])
+
+    # # def camera_controller_Task(self, task):
+    # #     # def zoom(a):
+    # #     #     self.camera.setPos((self.player_position[0]),
+    # #     #                        (self.player_position[0] + a),
+    # #     #                        (self.player_position[0]))
+
+    # #     self.accept("wheel_up", self.zoom(-1))
+    # #     self.accept("wheel_down", self.zoom(1))
+
+    # #     return task.cont
 
     def load_Sun(self):
         print("DEBUG: Loading Sun ... ")
@@ -250,70 +264,31 @@ class Win(ShowBase):
 
         return task.cont
 
+    def move_player_Forward(self):
+        self.player.setPos(self.player_position[0],
+                           self.player_position[1] + 1,
+                           self.player_position[2])
+
+    def move_player_Backward(self):
+        self.player.setPos(self.player_position[0],
+                           self.player_position[1] - 1,
+                           self.player_position[2])
+
     def rotate_player_Left(self):
-        self.player.setHpr(self.player_hpr[0],
-                           self.player_hpr[0],
-                           self.player_hpr[0] + 1)
+        # X=left/right, Y=zoom, Z=Up/down.
+        # Heading, pitch, roll.
+
+        self.player.setHpr(self.player.getHpr()[0] + 1,
+                           self.player.getHpr()[1],
+                           self.player.getHpr()[2])
 
     def rotate_player_Right(self):
-        self.player.setHpr(self.player_hpr[0],
-                           self.player_hpr[0],
-                           self.player_hpr[0] - 1)
-
-    # def move_player(w=False,
-    #                 a=False,
-    #                 s=False,
-    #                 d=False):
-
-    #     # Move forward
-    #     if w:
-    #         self.player.setPos(self.player_hpr[0],
-    #                            self.player_hpr[0],
-    #                            self.player_hpr[0])
-
-    #     # Rotate left
-    #     if a:
-    #         self.player.setPos(self.player_position[0] + 1,
-    #                            self.player_position[0],
-    #                            self.player_position[0])
-
-    #     # Move back
-    #     if s:
-    #         self.player.setPos(self.player_position[0] - 1,
-    #                            self.player_position[0],
-    #                            self.player_position[0])
-
-    #     # Rotate right
-    #     if d:
-    #         pass
+        self.player.setHpr(self.player.getHpr()[0] - 1,
+                           self.player.getHpr()[1],
+                           self.player.getHpr()[2])
 
 
     def load_Player(self):
-        print("DEBUG: Loading player ... ")
-
-        # self.player_scale = player_scale
-        # self.player_position = player_position
-
-        # self.player_model = "assets/models/figures/gray_boy.egg"
-
-        # self.player = self.loader.loadModel(self.player_model)
-
-        # self.player.setScale(self.player_scale["a"],
-                    #                 self.player_scale["b"],
-                    #                 self.player_scale["c"])
-
-        # self.player.setPos(self.player_position["a"],
-                    #               self.player_position["b"],
-                    #               self.player_position["c"])
-
-        # # self.player_material = Material()
-        # # self.player_material.setShininess(0.0)
-        # # self.player_material.setDiffuse((1.0, 1.0, 1.0, 1.0))
-
-        # # self.player.setMaterial(self.player_material)
-
-        # self.player.reparentTo(self.render)
-        # print("DEBUG: DONE!")
         self.player_scale = (0, 0, 0)
         self.player_position = (0, 0, 0)
 
@@ -329,26 +304,41 @@ class Win(ShowBase):
                            self.player_position[1],
                            self.player_position[2])
 
-        # Floating empty object 2 units above the player for the camera to point at
-        self.player_camera_rot = NodePath(PandaNode("player_camera_rot"))
-        self.player_camera_rot.reparentTo(self.player)
-        self.player_camera_rot.setZ(2.0)
+        self.player.setHpr(0, 0, 0)
 
-    def load_Keys(self):
-        self.accept('escape', sys.exit)
+        # Create Player Node
 
-        self.accept("wheel_up",
-                    self.camera_Controller,
-                    extraArgs=[int(self.camera_zoom_increment)])
+        # Node for player turn
+        self.turn_Node = self.render.attachNewNode("turn_Node")
 
-        self.accept("wheel_down",
-                    self.camera_Controller,
-                    extraArgs=[int(-abs(self.camera_zoom_increment))])
+        # Node for the player
+        self.player_Node = self.render.attachNewNode("player_Node")
+        self.player_Node.reparentTo(self.player)
 
-        # self.accept("w", self.move_player, extraArgs=[w=True])
-        # self.accept("a", self.rotate_player_Left)
-        # self.accept("s", self.move_player, extraArgs=[s=True])
-        # self.accept("d", self.rotate_player_Right)
+        # camera_Node becomes a child of player_Node in
+        # self.initialize_Camera
+
+    # def load_Keys(self):
+    #     self.accept('escape', sys.exit)
+
+        # self.accept("wheel_up",
+        #             self.camera_Controller,
+        #             extraArgs=[int(self.camera_zoom_increment)])
+
+        # self.accept("wheel_down",
+        #             self.camera_Controller,
+        #             extraArgs=[int(-abs(self.camera_zoom_increment))])
+
+        self.accept("w", self.move_player_Forward)
+        self.accept("a", self.rotate_player_Left)
+        self.accept("s", self.move_player_Backward)
+        self.accept("d", self.rotate_player_Right)
+
+        # inputState.watchWithModifiers('forward', 'w')
+        # inputState.watchWithModifiers('left', 'a')
+        # inputState.watchWithModifiers('backward', 's')
+        # inputState.watchWithModifiers('right', 'd')
+
 
 def main():
     win = Win()
