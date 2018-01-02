@@ -7,39 +7,48 @@
     https://www.panda3d.org/manual/index.php/A_Panda3D_Hello_World_Tutorial
 
 """
-import time
-import datetime
-import random
+# import time
+# import datetime
+# import random
 import sys
 
 # from math import *
-from math import sin
-from math import cos
-from math import pi
+# import math
+# import numpy
 
 # import panda3d
 # from panda3d.core import *
 
 from direct.showbase.ShowBase import ShowBase
-from direct.showbase import DirectObject
-from direct.showbase.InputStateGlobal import inputState
-from direct.task import Task
+# from direct.showbase import DirectObject
+# from direct.showbase.InputStateGlobal import inputState
+# from direct.task import Task
 from direct.actor.Actor import Actor
-from direct.gui.OnscreenText import OnscreenText
+# from direct.gui.OnscreenText import OnscreenText
 
 from panda3d.core import Material
 
 # Lighting
 # https://www.panda3d.org/manual/index.php/Lighting
 from panda3d.core import DirectionalLight
-from panda3d.core import PointLight
-from panda3d.core import AmbientLight
-from panda3d.core import Spotlight
-from panda3d.core import PandaNode
-from panda3d.core import NodePath
-from panda3d.core import Camera
+# from panda3d.core import PointLight
+# from panda3d.core import AmbientLight
+# from panda3d.core import Spotlight
+# from panda3d.core import PandaNode
+# from panda3d.core import NodePath
+# from panda3d.core import Camera
+from panda3d.core import Vec2
+from panda3d.core import Vec3
+from panda3d.core import Vec4
+from panda3d.core import Point2
+from panda3d.core import Point3
+from panda3d.core import Point4
 
 from pandac.PandaModules import WindowProperties
+# from pandac.PandaModules import CompassEffect
+# https://www.panda3d.org/manual/index.php/Compass_Effects
+
+from debug_hud import Debug_HUD
 
 class Game(ShowBase):
     def __init__(self):
@@ -52,7 +61,6 @@ class Game(ShowBase):
         # Disable camera mouse control
         # https://www.panda3d.org/manual/index.php/The_Default_camera_Driver
         # self.disableMouse()
-
 
         self.props = WindowProperties()
 
@@ -74,6 +82,7 @@ class Game(ShowBase):
         self.initialize_camera()
         self.init_keys()
 
+        self.debug_hud = Debug_HUD(self)
         self.init_updates()
 
         self.start_done = True
@@ -84,12 +93,19 @@ class Game(ShowBase):
         # self.taskMgr.add(self.camera_text_task,
         #                  "camera_text_task")
 
+        self.taskMgr.add(self.track_camera_position_rotation,
+                         "track_camera_position_rotation")
 
-        self.taskMgr.add(self.track_player_PositionRotation,
-                         "track_player_PositionRotation")
+        self.taskMgr.add(self.debug_hud.update,
+                         "debug_hud.update")
+
+        self.taskMgr.add(self.track_player_position_rotation,
+                         "track_player_position_rotation")
+
 
         # self.taskMgr.add(self.test_rotate_Player,
         #                  "test_rotate_Player")
+
 
         self.taskMgr.add(self.player_controller_task,
                          "self.player_controller_task")
@@ -128,6 +144,12 @@ class Game(ShowBase):
 
     # TODO:
     # make camera a child of the player actor
+
+    def track_camera_position_rotation(self, task):
+        self.camera_position = self.camera.getPos()
+        self.camera_hpr = self.camera.getHpr()
+
+        return task.cont
 
     def initialize_camera(self):
         # TODO:
@@ -258,7 +280,7 @@ class Game(ShowBase):
 
     #     return task.cont
 
-    def track_player_PositionRotation(self, task):
+    def track_player_position_rotation(self, task):
         # Player position set once a frame
         # rather than many times within
         # multiple function calls
@@ -300,6 +322,8 @@ class Game(ShowBase):
             self.player_sprinting = False
 
     def player_controller_task(self, task):
+
+        # Movement
         if self.player_moving == "forward":
             self.player.setPos(self.player_position[0],
                                self.player_position[1] +
@@ -341,8 +365,9 @@ class Game(ShowBase):
     def init_player(self):
         self.player_scale = (0, 0, 0)
         self.player_position = (0, 0, 0)
+        self.player_hpr = (0, 0, 0)
 
-        self.player_speed = 2.5
+        self.player_speed = 1.5
 
         # self.player_moving_Forward = False
         # self.player_moving_Backward = False
@@ -381,7 +406,7 @@ class Game(ShowBase):
         # TODO:
         # Fix bug where "escape": sys.exit(1) in self.keymap
         # gets executed (for no apparent reason...) when
-        # the keymap is loaded during init process
+        # the keymap is loaded in a loop during init process
         # ...
         # lol
 
