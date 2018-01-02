@@ -50,7 +50,7 @@ class Win(ShowBase):
         self.start_done = False
 
         # Disable camera mouse control
-        # https://www.panda3d.org/manual/index.php/The_Default_Camera_Driver
+        # https://www.panda3d.org/manual/index.php/The_Default_camera_Driver
         # self.disableMouse()
 
 
@@ -66,23 +66,23 @@ class Win(ShowBase):
         # Out of Body Experience camera control
         # self.oobe()
 
-        self.init_Sun()
-        self.init_Environment()
-        self.set_camera_OnscreenText()
+        self.init_sun()
+        self.init_environment()
+        self.set_camera_onscreen_text()
         self.mouse_and_cursor()
-        self.init_Player()
-        self.initialize_Camera()
-        self.init_Keys()
+        self.init_player()
+        self.initialize_camera()
+        self.init_keys()
 
-        self.init_Updates()
+        self.init_updates()
 
         self.start_done = True
 
-    def init_Updates(self):
+    def init_updates(self):
         # TODO
         # Add some task manager
-        self.taskMgr.add(self.camera_text_Task,
-                         "camera_text_Task")
+        self.taskMgr.add(self.camera_text_task,
+                         "camera_text_task")
 
 
         self.taskMgr.add(self.track_player_PositionRotation,
@@ -91,10 +91,10 @@ class Win(ShowBase):
         # self.taskMgr.add(self.test_rotate_Player,
         #                  "test_rotate_Player")
 
-        self.taskMgr.add(self.player_controller_Task,
-                         "self.player_controller_Task")
+        self.taskMgr.add(self.player_controller_task,
+                         "self.player_controller_task")
 
-    def set_camera_OnscreenText(self):
+    def set_camera_onscreen_text(self):
         # print("DEBUG: Adjusting view port ...")
         # self.camera.setPos(10, 10, 10)
         # self.camera.setHpr(55, 0, 135)
@@ -117,7 +117,7 @@ class Win(ShowBase):
 
     # TODO:
     # Create GUI for editing camera position and snapping to follow the player
-    def camera_text_Task(self, task):
+    def camera_text_task(self, task):
         self.camera_info_text.destroy()
         self.camera_info_text = OnscreenText(text="pos:{} hpr:{}".format(
                                 self.camera.getPos(),
@@ -129,7 +129,7 @@ class Win(ShowBase):
     # TODO:
     # make camera a child of the player actor
 
-    def initialize_Camera(self):
+    def initialize_camera(self):
         # TODO:
         # https://www.panda3d.org/forums/viewtopic.php?t=1319
 
@@ -152,7 +152,7 @@ class Win(ShowBase):
         self.camera.setPos(0, -35, 18)  # X=left/right, Y=zoom, Z=Up/down.
         self.camera.setHpr(0, -25, 0)   # Heading, pitch, roll.
 
-    # def initialize_Camera(self):
+    # def initialize_camera(self):
     #     self.camera.setPos(self.player_position[0],
     #                        self.player_position[1] - 16,
     #                        self.player_position[2] + 8)
@@ -202,7 +202,7 @@ class Win(ShowBase):
 
     # #     return task.cont
 
-    def init_Sun(self):
+    def init_sun(self):
         # print("DEBUG: Loading Sun ... ")
         # self.directional_light = AmbientLight("Sun")
         # self.directional_light.setColor((0.2, 0.2, 0.9, 1.0))
@@ -227,7 +227,7 @@ class Win(ShowBase):
         # sun_node = self.render.attachNewNode(self.sun)
         # self.render.setLight(sun_node)
 
-    def init_Environment(self):
+    def init_environment(self):
         # print("DEBUG: Loading evironment models ...")
 
         self.ground_object = self.loader.loadModel(
@@ -240,8 +240,8 @@ class Win(ShowBase):
         self.ground_material = Material()
         self.ground_material.setShininess(0.0)
         # self.ground_material.setAmbient((0.0, 0.0, 1.0, 1.0))
-        # print("DEBUG: in init_Environment: if ground_material.hasAmbient() {}".format(self.ground_material.hasAmbient()))
-        # print("DEBUG: in init_Environment: if ground_material.hasEmission() {}".format(self.ground_material.hasEmission()))
+        # print("DEBUG: in init_environment: if ground_material.hasAmbient() {}".format(self.ground_material.hasAmbient()))
+        # print("DEBUG: in init_environment: if ground_material.hasEmission() {}".format(self.ground_material.hasEmission()))
 
         self.ground_material.setDiffuse((0.2, 0.7, 0.2, 1.0))
 
@@ -293,13 +293,13 @@ class Win(ShowBase):
         elif not d:
             self.player_moving = None
 
-    def player_sprint_Toggle(self, s):
+    def player_sprint_toggle(self, s):
         if s:
             self.player_sprinting = True
         elif not s:
             self.player_sprinting = False
 
-    def player_controller_Task(self, task):
+    def player_controller_task(self, task):
         if self.player_moving == "forward":
             self.player.setPos(self.player_position[0],
                                self.player_position[1] +
@@ -338,7 +338,7 @@ class Win(ShowBase):
 
         return task.cont
 
-    def init_Player(self):
+    def init_player(self):
         self.player_scale = (0, 0, 0)
         self.player_position = (0, 0, 0)
 
@@ -375,9 +375,9 @@ class Win(ShowBase):
         self.player_Node.reparentTo(self.player)
 
         # camera_Node becomes a child of player_Node in
-        # self.initialize_Camera
+        # self.initialize_camera
 
-    def init_Keys(self):
+    def init_keys(self):
         self.accept("escape", sys.exit, extraArgs=[1])
 
         self.accept("w-up",
@@ -409,8 +409,8 @@ class Win(ShowBase):
                     self.player_movement_d,
                     extraArgs=[True])
 
-        self.accept("shift-up", self.player_sprint_Toggle, extraArgs=[False])
-        self.accept("shift", self.player_sprint_Toggle, extraArgs=[True])
+        self.accept("shift-up", self.player_sprint_toggle, extraArgs=[False])
+        self.accept("shift", self.player_sprint_toggle, extraArgs=[True])
 
         # inputState.watchWithModifiers('forward', 'w')
         # inputState.watchWithModifiers('left', 'a')
