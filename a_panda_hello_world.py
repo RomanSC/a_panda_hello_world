@@ -46,6 +46,7 @@ class Win(ShowBase):
         super().__init__(self)
         # ShowBase.__init__(self)
 
+        self.messenger.toggleVerbose()
         self.start_done = False
 
         # Disable camera mouse control
@@ -94,7 +95,7 @@ class Win(ShowBase):
                          "self.player_controller_Task")
 
     def set_camera_OnscreenText(self):
-        print("DEBUG: Adjusting view port ...")
+        # print("DEBUG: Adjusting view port ...")
         # self.camera.setPos(10, 10, 10)
         # self.camera.setHpr(55, 0, 135)
 
@@ -103,7 +104,7 @@ class Win(ShowBase):
                                 self.camera.getPos(),
                                 self.camera.getHpr()),
                                 pos=self.camera_text_pos)
-        print("DEBUG: DONE!")
+        # print("DEBUG: DONE!")
 
     def mouse_and_cursor(self):
         # Disable mouse camera control
@@ -202,7 +203,7 @@ class Win(ShowBase):
     # #     return task.cont
 
     def init_Sun(self):
-        print("DEBUG: Loading Sun ... ")
+        # print("DEBUG: Loading Sun ... ")
         # self.directional_light = AmbientLight("Sun")
         # self.directional_light.setColor((0.2, 0.2, 0.9, 1.0))
 
@@ -218,7 +219,7 @@ class Win(ShowBase):
         slnp = self.render.attachNewNode(self.sun)
         slnp.setHpr(0, 0, 0)
         self.render.setLight(slnp)
-        print("DEBUG: DONE!")
+        # print("DEBUG: DONE!")
 
         # Ambient light
         # self.sun = AmbientLight("self.sun")
@@ -227,7 +228,7 @@ class Win(ShowBase):
         # self.render.setLight(sun_node)
 
     def init_Environment(self):
-        print("DEBUG: Loading evironment models ...")
+        # print("DEBUG: Loading evironment models ...")
 
         self.ground_object = self.loader.loadModel(
                            "assets/models/environment/plane.egg")
@@ -248,7 +249,7 @@ class Win(ShowBase):
 
         # Always last
         self.ground_object.reparentTo(self.render)
-        print("DEBUG: DONE!")
+        # print("DEBUG: DONE!")
 
     # def test_rotate_Player(self, task):
     #     self.player.setHpr(self.player_hpr[0] + 1, # Z, up/down axis
@@ -269,37 +270,43 @@ class Win(ShowBase):
 
     def player_movement_w(self, w):
         if w:
-            self.player_moving_Forward = True
+            self.player_moving = "forward"
         elif not w:
-            self.player_moving_Forward = False
+            self.player_moving = None
 
     def player_movement_a(self, a):
         if a:
-            self.player_rotating_Left = True
+            self.player_moving = "left"
         elif not a:
-            self.player_rotating_Left = False
+            self.player_moving = None
 
 
     def player_movement_s(self, s):
         if s:
-            self.player_moving_Backward = True
+            self.player_moving = "backward"
         elif not s:
-            self.player_moving_Backward = False
+            self.player_moving = None
 
     def player_movement_d(self, d):
         if d:
-            self.player_rotating_Right = True
+            self.player_moving = "right"
         elif not d:
-            self.player_rotating_Right = False
+            self.player_moving = None
+
+    def player_sprint_Toggle(self, s):
+        if s:
+            self.player_sprinting = True
+        elif not s:
+            self.player_sprinting = False
 
     def player_controller_Task(self, task):
-        if self.player_moving_Forward:
+        if self.player_moving == "forward":
             self.player.setPos(self.player_position[0],
                                self.player_position[1] +
                                (1 * self.player_speed),
                                self.player_position[2])
 
-        if self.player_moving_Backward:
+        if self.player_moving == "backward":
             self.player.setPos(self.player_position[0],
                                self.player_position[1] -
                                (1 * self.player_speed),
@@ -308,23 +315,26 @@ class Win(ShowBase):
         # X=left/right, Y=zoom, Z=Up/down.
         # Heading, pitch, roll.
 
-        if self.player_rotating_Left:
+        if self.player_moving == "left":
             self.player.setHpr(self.player.getHpr()[0] +
                                (1 * self.player_speed),
                                self.player.getHpr()[1],
                                self.player.getHpr()[2])
 
-        if self.player_rotating_Right:
+        if self.player_moving == "right":
             self.player.setHpr(self.player.getHpr()[0] -
                                (1 * self.player_speed),
                                self.player.getHpr()[1],
                                self.player.getHpr()[2])
 
-        print("DEBUG: w = {} a = {} s = {} d = {}".format(
-                self.player_moving_Forward,
-                self.player_rotating_Left,
-                self.player_moving_Backward,
-                self.player_rotating_Right))
+        if self.player_sprinting:
+            self.player_speed * 2
+
+        # print("DEBUG: w = {} a = {} s = {} d = {}".format(
+        #         self.player_moving_Forward,
+        #         self.player_rotating_Left,
+        #         self.player_moving_Backward,
+        #         self.player_rotating_Right))
 
         return task.cont
 
@@ -334,10 +344,12 @@ class Win(ShowBase):
 
         self.player_speed = 2.5
 
-        self.player_moving_Forward = False
-        self.player_moving_Backward = False
-        self.player_rotating_Left = False
-        self.player_rotating_Right = False
+        # self.player_moving_Forward = False
+        # self.player_moving_Backward = False
+        # self.player_rotating_Left = False
+        # self.player_rotating_Right = False
+        self.player_moving = None
+        self.player_sprinting = False
 
         self.player = Actor("assets/models/figures/gray_boy.egg",
                             {"run": "assets/models/figures/gray_boy.egg",
@@ -366,24 +378,26 @@ class Win(ShowBase):
         # self.initialize_Camera
 
     def init_Keys(self):
+        self.accept("escape", sys.exit, extraArgs=[1])
+
         self.accept("w-up",
                     self.player_movement_w,
                     extraArgs=[False])
-        self.accept("w-down",
+        self.accept("w",
                     self.player_movement_w,
                     extraArgs=[True])
 
         self.accept("a-up",
                     self.player_movement_a,
                     extraArgs=[False])
-        self.accept("a-down",
+        self.accept("a",
                     self.player_movement_a,
                     extraArgs=[True])
 
         self.accept("s-up",
                     self.player_movement_s,
                     extraArgs=[False])
-        self.accept("s-down",
+        self.accept("s",
                     self.player_movement_s,
                     extraArgs=[True])
 
@@ -391,15 +405,17 @@ class Win(ShowBase):
                     self.player_movement_d,
                     extraArgs=[False])
 
-        self.accept("d-down",
+        self.accept("d",
                     self.player_movement_d,
                     extraArgs=[True])
+
+        self.accept("shift-up", self.player_sprint_Toggle, extraArgs=[False])
+        self.accept("shift", self.player_sprint_Toggle, extraArgs=[True])
 
         # inputState.watchWithModifiers('forward', 'w')
         # inputState.watchWithModifiers('left', 'a')
         # inputState.watchWithModifiers('backward', 's')
         # inputState.watchWithModifiers('right', 'd')
-
 
 def main():
     win = Win()
