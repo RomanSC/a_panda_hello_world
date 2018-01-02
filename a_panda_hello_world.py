@@ -268,26 +268,26 @@ class Game(ShowBase):
 
         return task.cont
 
-    def player_movement_w(self, w):
+    def player_movement_forward(self, w):
         if w:
             self.player_moving = "forward"
         elif not w:
             self.player_moving = None
 
-    def player_movement_a(self, a):
+    def player_movement_left(self, a):
         if a:
             self.player_moving = "left"
         elif not a:
             self.player_moving = None
 
 
-    def player_movement_s(self, s):
+    def player_movement_backward(self, s):
         if s:
             self.player_moving = "backward"
         elif not s:
             self.player_moving = None
 
-    def player_movement_d(self, d):
+    def player_movement_right(self, d):
         if d:
             self.player_moving = "right"
         elif not d:
@@ -378,44 +378,76 @@ class Game(ShowBase):
         # self.initialize_camera
 
     def init_keys(self):
+        # TODO:
+        # Fix bug where "escape": sys.exit(1) in self.keymap
+        # gets executed (for no apparent reason...) when
+        # the keymap is loaded during init process
+        # ...
+        # lol
+
         self.accept("escape", sys.exit, extraArgs=[1])
+        self.keymap = {  # "escape":
+                         # [sys.exit, 1],
 
-        self.accept("w-up",
-                    self.player_movement_w,
-                    extraArgs=[False])
-        self.accept("w",
-                    self.player_movement_w,
-                    extraArgs=[True])
+                       "w":
+                       [self.player_movement_forward, [True]],
 
-        self.accept("a-up",
-                    self.player_movement_a,
-                    extraArgs=[False])
-        self.accept("a",
-                    self.player_movement_a,
-                    extraArgs=[True])
+                       "w-up":
+                       [self.player_movement_forward, [False]],
 
-        self.accept("s-up",
-                    self.player_movement_s,
-                    extraArgs=[False])
-        self.accept("s",
-                    self.player_movement_s,
-                    extraArgs=[True])
+                       "a":
+                       [self.player_movement_left, [True]],
 
-        self.accept("d-up",
-                    self.player_movement_d,
-                    extraArgs=[False])
+                       "a-up":
+                       [self.player_movement_left, [False]],
 
-        self.accept("d",
-                    self.player_movement_d,
-                    extraArgs=[True])
+                       "s":
+                       [self.player_movement_backward, [True]],
 
-        self.accept("shift-up", self.player_sprint_toggle, extraArgs=[False])
-        self.accept("shift", self.player_sprint_toggle, extraArgs=[True])
+                       "s-up":
+                       [self.player_movement_backward, [False]],
 
-        # inputState.watchWithModifiers('forward', 'w')
-        # inputState.watchWithModifiers('left', 'a')
-        # inputState.watchWithModifiers('backward', 's')
-        # inputState.watchWithModifiers('right', 'd')
+                       "d":
+                       [self.player_movement_right, [True]],
+
+                       "d-up":
+                       [self.player_movement_right, [False]],
+
+                       "arrow_up":
+                       [self.player_movement_forward, [True]],
+
+                       "arrow_up-up":
+                       [self.player_movement_forward, [False]],
+
+                       "arrow_left":
+                       [self.player_movement_left, [True]],
+
+                       "arrow_left-up":
+                       [self.player_movement_left, [False]],
+
+                       "arrow_down":
+                       [self.player_movement_backward, [True]],
+
+                       "arrow_down-up":
+                       [self.player_movement_backward, [False]],
+
+                       "arrow_right":
+
+                       [self.player_movement_right, [True]],
+                       "arrow_right-up":
+
+                       [self.player_movement_right, [False]]}
+
+        for key, val in self.keymap.items():
+            # self.accept(<keystr>, <function>, <args>)
+            print(key,
+                  self.keymap[key][0],
+                  self.keymap[key][1])
+
+            self.accept(key,
+                        self.keymap[key][0],
+                        extraArgs=list(self.keymap[key][1]))
+
 
 def main():
     game = Game()
