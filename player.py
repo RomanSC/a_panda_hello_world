@@ -25,9 +25,11 @@ class Player(Actor):
         self.start_pos = (0, 0, 0)
         self.start_hpr = (0, 0, 0)
 
-        self.speed_modes = {"walk": 1.0, "run": 1.5, "sprint": 2.5}
+        self.speed_modes = {"walk": 10, "run": 15, "sprint": 30}
         self.speed_default = self.speed_modes["run"]
         self.speed = self.speed_modes["run"]
+
+        self.turn_speed = 60
 
         self.jump_height = 3
 
@@ -70,33 +72,35 @@ class Player(Actor):
 
     # Movement etc...
     def controller(self, task):
+        dt = globalClock.getDt()
         # Navigation
         if self.game.keymap.map["forward"]:
             # self.setY(self.getY() + (1 * self.speed))
-            self.setPos(self, (0, (1 * self.speed), 0))
+            self.setPos(self, (0, ((1 * self.speed) * dt), 0))
 
         if self.game.keymap.map["left"]:
-            self.setH(self.getH() + (1 * self.speed))
+            self.setH(self.getH() + ((1 * self.speed) * dt))
             # For move_left
-            # self.setPos(self, ((1 * self.speed), 0, 0))
+            # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
 
         if self.game.keymap.map["backward"]:
             # self.setY(self.getY() - (1 * self.speed))
-            self.setPos(self, (0, -(1 * self.speed), 0))
+            self.setPos(self, (0, -((1 * self.turn_speed) * dt), 0))
 
         if self.game.keymap.map["right"]:
-            self.setH(self.getH() - (1 * self.speed))
+            self.setH(self.getH() + -((1 * self.turn_speed) * dt))
             # For move_right
-            # self.setPos(self, (-(1 * self.speed), 0, 0))
+            # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
 
         # Jump
         if self.game.keymap.map["jump"]:
             self.jump()
 
+        # Sprint
         if self.game.keymap.map["sprint"]:
             # self.toggle_sprint()
             self.speed = self.speed_modes["sprint"]
-        elif not self.game.keymap.map["sprint"]:
+        else:
             self.speed = self.speed_default
 
         return task.cont

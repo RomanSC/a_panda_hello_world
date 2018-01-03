@@ -7,46 +7,13 @@
     https://www.panda3d.org/manual/index.php/A_Panda3D_Hello_World_Tutorial
 
 """
-# import time
-# import datetime
-# import random
-import sys
-
-# from math import *
-# import math
-# import numpy
-
-# import panda3d
-# from panda3d.core import *
-
 from direct.showbase.ShowBase import ShowBase
-# from direct.showbase import DirectObject
-# from direct.showbase.InputStateGlobal import inputState
-# from direct.task import Task
-from direct.actor.Actor import Actor
-# from direct.gui.OnscreenText import OnscreenText
 
 from panda3d.core import Material
 
-# Lighting
-# https://www.panda3d.org/manual/index.php/Lighting
 from panda3d.core import DirectionalLight
-# from panda3d.core import PointLight
-# from panda3d.core import AmbientLight
-# from panda3d.core import Spotlight
-# from panda3d.core import PandaNode
-# from panda3d.core import NodePath
-# from panda3d.core import Camera
-from panda3d.core import Vec2
-from panda3d.core import Vec3
-from panda3d.core import Vec4
-from panda3d.core import Point2
-from panda3d.core import Point3
-from panda3d.core import Point4
 
 from pandac.PandaModules import WindowProperties
-# from pandac.PandaModules import CompassEffect
-# https://www.panda3d.org/manual/index.php/Compass_Effects
 
 from player import Player
 from camera import Camera
