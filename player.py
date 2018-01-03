@@ -6,10 +6,9 @@ from direct.actor.Actor import Actor
 import inspect
 
 
-# class Player(Actor):
-class Player:
+class Player(Actor):
     def __init__(self, game):
-        # super().__init__(self)
+        super().__init__(self)
         self.game = game
 
         self.scale = 0.2
@@ -22,21 +21,20 @@ class Player:
         self.moving = None
         self.sprinting = False
 
-        self.object = Actor("assets/models/figures/gray_boy.egg",
-                            {"run": "assets/models/figures/gray_boy.egg",
-                             "walk": "assets/models/figures/gray_boy.egg"})
-        print(inspect.getargspec(Actor()))
+        # self = Actor("assets/models/figures/gray_boy.egg",
+        #                     {"run": "assets/models/figures/gray_boy.egg",
+        #                      "walk": "assets/models/figures/gray_boy.egg"})
 
-        self.object.reparentTo(self.game.render)
-        self.object.setScale(self.scale)
+        self.reparentTo(self.game.render)
+        self.setScale(self.scale)
 
-        self.object.setPos(self.pos[0],
-                           self.pos[0],
-                           self.pos[0])
+        self.setPos(self.pos[0],
+                    self.pos[0],
+                    self.pos[0])
 
-        self.object.setHpr(self.hpr[0],
-                           self.hpr[1],
-                           self.hpr[2])
+        self.setHpr(self.hpr[0],
+                    self.hpr[1],
+                    self.hpr[2])
 
         # Create Player Nodes
         # TODO
@@ -47,38 +45,38 @@ class Player:
 
         # Node for the player
         self.node = self.game.render.attachNewNode("player node")
-        self.node.reparentTo(self.object)
+        self.node.reparentTo(self)
 
-    def getPos(self):
-        return self.object.getPos()
+    # def getPos(self):
+    #     return self.getPos()
 
-    def getHpr(self):
-        return self.object.getHpr()
+    # def getHpr(self):
+    #     return self.getHpr()
 
-    def getX(self):
-        return self.object.getX()
+    # def getX(self):
+    #     return self.getX()
 
-    def getY(self):
-        return self.object.getY()
+    # def getY(self):
+    #     return self.getY()
 
-    def getZ(self):
-        return self.object.getZ()
+    # def getZ(self):
+    #     return self.getZ()
 
-    def getH(self):
-        return self.object.getH()
+    # def getH(self):
+    #     return self.getH()
 
-    def getP(self):
-        return self.object.getP()
+    # def getP(self):
+    #     return self.getP()
 
-    def getR(self):
-        return self.object.getR()
+    # def getR(self):
+    #     return self.getR()
 
     def track_player_pos_rotation(self, task):
         # Player position set once a frame
         # rather than many times within
         # multiple function calls
-        self.object.pos = self.object.getPos()
-        self.object.hpr = self.object.getHpr()
+        self.pos = self.getPos()
+        self.hpr = self.getHpr()
 
         return task.cont
 
@@ -115,16 +113,16 @@ class Player:
     # Movement etc...
     def player_controller(self, task):
         if self.moving == "forward":
-            self.object.setY(self.object.getY() + (1 * self.run_speed))
+            self.setY(self.getY() + (1 * self.run_speed))
 
         if self.moving == "backward":
-            self.object.setY(self.object.getY() - (1 * self.run_speed))
+            self.setY(self.getY() - (1 * self.run_speed))
 
         if self.moving == "left":
-            self.object.setH(self.object.getH() + (1 * self.run_speed))
+            self.setH(self.getH() + (1 * self.run_speed))
 
         if self.moving == "right":
-            self.object.setH(self.object.getH() - (1 * self.run_speed))
+            self.setH(self.getH() - (1 * self.run_speed))
 
         if self.sprinting:
             self.player_speed * 2
