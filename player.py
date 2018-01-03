@@ -31,7 +31,7 @@ class Player(Actor):
 
         self.turn_speed = 60
 
-        self.jump_height = 3
+        self.jump_height = 10
 
         # self.moving = None
 
@@ -66,7 +66,8 @@ class Player(Actor):
     #         self.speed = self.speed_default
 
     def jump(self):
-        self.setPos(self, (0, 0, (1 * self.jump_height)))
+        if self.getZ() <= self.gravity.gravity_floor:
+            self.setPos(self, (0, 0, (1 * self.jump_height)))
 
         self.game.keymap.map["jump"] = False
 
