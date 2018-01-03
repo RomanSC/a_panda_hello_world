@@ -33,26 +33,25 @@ class Debug_HUD:
         # self.font_bold_italic
 
     def init_HUD(self):
-        self.display_text = "test"
-        self.display_text = str("player_position = (x = {}, y = {}, z = {})" +
-                             "player_position = (x = {}, y = {}, z = {})" +
-                             "player_position = (x = {}, y = {}, z = {})" +
-                             "player_position = (x = {}, y = {}, z = {})")\
-                             .format(
-                             self.player_position[0],
-                             self.player_position[1],
-                             self.player_position[2],
-                             self.player_hpr[0],
-                             self.player_hpr[1],
-                             self.player_hpr[2],
-                             self.camera_position[0],
-                             self.camera_position[1],
-                             self.camera_position[2],
-                             self.camera_hpr[0],
-                             self.camera_hpr[1],
-                             self.camera_hpr[2]))
+        # self.display_text =  "player_position = (x = {}, y = {}, z = {})" +
+        #                      "player_position = (x = {}, y = {}, z = {})" +
+        #                      "player_position = (x = {}, y = {}, z = {})" +
+        #                      "player_position = (x = {}, y = {}, z = {})")\
+        #                      .format(
+        #                      self.player_position[0],
+        #                      self.player_position[1],
+        #                      self.player_position[2],
+        #                      self.player_hpr[0],
+        #                      self.player_hpr[1],
+        #                      self.player_hpr[2],
+        #                      self.camera_position[0],
+        #                      self.camera_position[1],
+        #                      self.camera_position[2],
+        #                      self.camera_hpr[0],
+        #                      self.camera_hpr[1],
+        #                      self.camera_hpr[2])
 
-        # self.display_text = "test"
+        self.display_text = "test"
 
         # self.debug_hud_text_object = OnscreenText(
         #     text=self.debug_hud_display_text,
@@ -69,30 +68,31 @@ class Debug_HUD:
                                              textMayChange=1)
 
     def update(self, task):
-        self.player_position = (0, 0, 0)
-        self.player_hpr = (0, 0, 0)
-        self.camera_position = (0, 0, 0)
-        self.camera_hpr = (0, 0, 0)
+        # self.player_position = (0, 0, 0)
+        # self.player_hpr = (0, 0, 0)
+        # self.camera_position = (0, 0, 0)
+        # self.camera_hpr = (0, 0, 0)
 
         if self.game.player:
-            self.display_text_obj.setText(
-                "player_position = (x = {}, y = {}, z = {})" +
-                "player_position = (x = {}, y = {}, z = {})" +
-                "player_position = (x = {}, y = {}, z = {})" +
-                "player_position = (x = {}, y = {}, z = {})").format(
-                self.game.player_position[0],
-                self.game.player_position[1],
-                self.game.player_position[2],
-                self.game.player_hpr[0],
-                self.game.player_hpr[1],
-                self.game.player_hpr[2],
-                self.game.camera_position[0],
-                self.game.camera_position[1],
-                self.game.camera_position[2],
-                self.game.camera_hpr[0],
-                self.game.camera_hpr[1],
-                self.game.camera_hpr[2]
-            )
+            self.display_text_obj.setText("test")
+            # self.display_text_obj.setText(
+            #     "player_position = (x = {}, y = {}, z = {})" +
+            #     "player_position = (x = {}, y = {}, z = {})" +
+            #     "player_position = (x = {}, y = {}, z = {})" +
+            #     "player_position = (x = {}, y = {}, z = {})").format(
+            #     self.game.player_position[0],
+            #     self.game.player_position[1],
+            #     self.game.player_position[2],
+            #     self.game.player_hpr[0],
+            #     self.game.player_hpr[1],
+            #     self.game.player_hpr[2],
+            #     self.game.camera_position[0],
+            #     self.game.camera_position[1],
+            #     self.game.camera_position[2],
+            #     self.game.camera_hpr[0],
+            #     self.game.camera_hpr[1],
+            #     self.game.camera_hpr[2]
+            # )
 
         self.display_text_obj.setText("test2")
 
