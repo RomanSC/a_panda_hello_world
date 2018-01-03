@@ -77,6 +77,7 @@ class Game(ShowBase):
         self.init_sun()
         self.init_environment()
         # self.set_camera_onscreen_text()
+        self.window_properties()
         self.mouse_and_cursor()
         self.init_player()
         self.initialize_camera()
@@ -96,8 +97,8 @@ class Game(ShowBase):
         self.taskMgr.add(self.track_camera_position_rotation,
                          "track_camera_position_rotation")
 
-        self.taskMgr.add(self.debug_hud.update,
-                         "debug_hud.update")
+        # self.taskMgr.add(self.debug_hud.update,
+        #                  "debug_hud.update")
 
         self.taskMgr.add(self.track_player_position_rotation,
                          "track_player_position_rotation")
@@ -122,14 +123,24 @@ class Game(ShowBase):
     #                             pos=self.camera_text_pos)
     #     # print("DEBUG: DONE!")
 
+    def window_properties(self):
+        self.window_props = WindowProperties()
+        self.window_props.setCursorHidden(False)
+
+        self.window_props.setSize(1920, 1200)
+        self.window_props.setFullscreen(True)
+
+        self.win.requestProperties(self.window_props)
+
     def mouse_and_cursor(self):
         # Disable mouse camera control
         self.disableMouse()
 
-        self.props.setCursorHidden(False)
+        # self.props = WindowProperties()
+        # self.props.setCursorHidden(False)
 
-        self.props = WindowProperties()
-        self.win.requestProperties(self.props)
+        # self.props = WindowProperties()
+        # self.win.requestProperties(self.props)
 
     # TODO:
     # Create GUI for editing camera position and snapping to follow the player
