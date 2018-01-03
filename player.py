@@ -10,8 +10,8 @@ class Player(Actor):
         self.game = game
 
         self.scale = 0.2
-        self.pos = (0, 0, 0)
-        self.hpr = (0, 0, 0)
+        self.start_pos = (0, 0, 0)
+        self.start_hpr = (0, 0, 0)
 
         self.speed_modes = {"walk": 1.0, "run": 1.5, "sprint": 2.5}
         self.speed_default = self.speed_modes["run"]
@@ -30,13 +30,8 @@ class Player(Actor):
         self.reparentTo(self.game.render)
         self.setScale(self.scale)
 
-        self.setPos(self.pos[0],
-                    self.pos[0],
-                    self.pos[0])
-
-        self.setHpr(self.hpr[0],
-                    self.hpr[1],
-                    self.hpr[2])
+        self.setPos(*self.start_pos)
+        self.setHpr(*self.start_hpr)
 
         # Create Player Nodes
 
@@ -56,7 +51,7 @@ class Player(Actor):
         elif not w:
             self.moving = None
 
-    def move_left(self, a):
+    def rotate_left(self, a):
         if a:
             self.moving = "left"
         elif not a:
@@ -68,17 +63,13 @@ class Player(Actor):
         elif not s:
             self.moving = None
 
-    def move_right(self, d):
+    def rotate_right(self, d):
         if d:
             self.moving = "right"
         elif not d:
             self.moving = None
 
     def toggle_sprint(self):
-        # if self.sprinting is True:
-        #     self.sprinting = False
-        # elif self.sprinting is False:
-        #     self.sprinting = True
         if self.speed != self.speed_modes["sprint"]:
             self.speed = self.speed_modes["sprint"]
         else:

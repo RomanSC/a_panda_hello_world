@@ -48,8 +48,9 @@ from pandac.PandaModules import WindowProperties
 # from pandac.PandaModules import CompassEffect
 # https://www.panda3d.org/manual/index.php/Compass_Effects
 
-from debug_hud import Debug_HUD
 from player import Player
+from camera import Camera
+from keymap import Keymap
 from update import Update
 
 
@@ -81,16 +82,13 @@ class Alpha(ShowBase):
 
         self.init_sun()
         self.init_environment()
-        # self.set_camera_onscreen_text()
         self.window_properties()
         self.mouse_and_cursor()
+
         self.player = Player(self)
-        self.initialize_camera()
-        self.init_keys()
-
-        self.debug_hud = Debug_HUD(self)
+        self.camera = Camera(self)
+        self.keymap = Keymap(self)
         self.update = Update(self)
-
         self.start_done = True
 
     def window_properties(self):
@@ -122,82 +120,6 @@ class Alpha(ShowBase):
     #                             pos=self.camera_text_pos)
 
     #     return task.cont
-
-    # TODO:
-    # make camera a child of the player actor
-
-    def initialize_camera(self):
-        # TODO:
-        # https://www.panda3d.org/forums/viewtopic.php?t=1319
-
-        # Player/Camera Node Setup
-
-        # <self.render>
-        # |-<player>
-        #   |-<player_dummy_node>
-        #     |-<camera_dummy_node>
-        #       |-camera
-
-        self.camera_Node = self.render.attachNewNode("camera_Node")
-
-        self.camera_Node.setPos(0, 0, 0)
-        self.camera_Node.setHpr(0, 0, 0)
-
-        self.camera.reparentTo(self.camera_Node)
-        self.camera_Node.reparentTo(self.player.node)
-
-        self.camera.setPos(0, -35, 18)  # X=left/right, Y=zoom, Z=Up/down.
-        self.camera.setHpr(0, -25, 0)   # Heading, pitch, roll.
-
-    # def initialize_camera(self):
-    #     self.camera.setPos(self.player.pos[0],
-    #                        self.player.pos[1] - 16,
-    #                        self.player.pos[2] + 8)
-
-    #     self.camera_zoom_level = 10
-    #     self.camera_zoom_increment = 1
-    #     self.camera_zoom_range = (-32, -42)  # in front and behind player, in
-    #                                          # that order
-
-    # def camera_Controller(self, a):
-    #     # Zoom on scroll
-    #     self.camera_zoom_level += a
-
-    #     x = self.player.pos[0]
-    #     y = self.player.pos[1] + self.camera_zoom_level
-    #     z = self.player.pos[2] + 8
-
-    #     if y > self.camera_zoom_range[0]:
-    #         # print("DEBUG: {} > self.camera_zoom_range[0]".format(y))
-    #         y = self.camera_zoom_range[0]
-    #         self.camera_zoom_level = self.camera_zoom_range[0]
-
-    #     elif y < self.camera_zoom_range[1]:
-    #         # print("DEBUG: {} < self.camera_zoom_range[0]".format(y))
-    #         y = self.camera_zoom_range[1]
-    #         self.camera_zoom_level = self.camera_zoom_range[1]
-
-    #     self.camera.setPos(x, y, z)
-
-    #     # print("DEBUG:\nself.player.pos = {}\nself.camera_zoom_level = {}"
-    #     #       .format(self.player.pos,
-    #     #               self.camera_zoom_level))
-
-    #     # Rotation
-    #     # self.camera.setHpr(self.player.hpr[0],
-    #     #                    self.player.hpr[1] - 25,
-    #     #                    self.player.hpr[2])
-
-    # # def camera_controller_Task(self, task):
-    # #     # def zoom(a):
-    # #     #     self.camera.setPos((self.player.pos[0]),
-    # #     #                        (self.player.pos[0] + a),
-    # #     #                        (self.player.pos[0]))
-
-    # #     self.accept("wheel_up", self.zoom(-1))
-    # #     self.accept("wheel_down", self.zoom(1))
-
-    # #     return task.cont
 
     def init_sun(self):
         # print("DEBUG: Loading Sun ... ")
@@ -247,78 +169,6 @@ class Alpha(ShowBase):
         # Always last
         self.ground_object.reparentTo(self.render)
         # print("DEBUG: DONE!")
-
-    def init_keys(self):
-        # TODO:
-        # Fix bug where "escape": sys.exit(1) in self.keymap
-        # gets executed (for no apparent reason...) when
-        # the keymap is loaded in a loop during init process
-        # ...
-        # lol
-
-        self.accept("escape", sys.exit, extraArgs=[1])
-        self.keymap = {  # "escape":
-                         # [sys.exit, 1],
-
-                       "w":
-                       [self.player.move_forward, [True]],
-
-                       "w-up":
-                       [self.player.move_forward, [False]],
-
-                       "a":
-                       [self.player.move_left, [True]],
-
-                       "a-up":
-                       [self.player.move_left, [False]],
-
-                       "s":
-                       [self.player.move_backward, [True]],
-
-                       "s-up":
-                       [self.player.move_backward, [False]],
-
-                       "d":
-                       [self.player.move_right, [True]],
-
-                       "d-up":
-                       [self.player.move_right, [False]],
-
-                       "arrow_up":
-                       [self.player.move_forward, [True]],
-
-                       "arrow_up-up":
-                       [self.player.move_forward, [False]],
-
-                       "arrow_left":
-                       [self.player.move_left, [True]],
-
-                       "arrow_left-up":
-                       [self.player.move_left, [False]],
-
-                       "arrow_down":
-                       [self.player.move_backward, [True]],
-
-                       "arrow_down-up":
-                       [self.player.move_backward, [False]],
-
-                       "arrow_right":
-
-                       [self.player.move_right, [True]],
-                       "arrow_right-up":
-
-                       [self.player.move_right, [False]]}
-
-        for key, val in self.keymap.items():
-            # self.accept(<keystr>, <function>, <args>)
-            print(key,
-                  self.keymap[key][0],
-                  self.keymap[key][1])
-
-            self.accept(key,
-                        self.keymap[key][0],
-                        extraArgs=list(self.keymap[key][1]))
-
 
 def main():
     scenes = [Alpha]
