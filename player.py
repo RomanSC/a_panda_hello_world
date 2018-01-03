@@ -93,15 +93,21 @@ class Player(Actor):
     # Movement etc...
     def controller(self, task):
         if self.moving == "forward":
-            self.setY(self.getY() + (1 * self.speed))
+            # self.setY(self.getY() + (1 * self.speed))
+            self.setPos(self, (0, (1 * self.speed), 0))
 
         if self.moving == "backward":
-            self.setY(self.getY() - (1 * self.speed))
+            # self.setY(self.getY() - (1 * self.speed))
+            self.setPos(self, (0, -(1 * self.speed), 0))
 
         if self.moving == "left":
             self.setH(self.getH() + (1 * self.speed))
+            # For move_left
+            # self.setPos(self, ((1 * self.speed), 0, 0))
 
         if self.moving == "right":
             self.setH(self.getH() - (1 * self.speed))
+            # For move_right
+            # self.setPos(self, (-(1 * self.speed), 0, 0))
 
         return task.cont

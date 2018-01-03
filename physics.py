@@ -12,8 +12,6 @@ class Gravity:
         self.gravity_floor = 0
         self.gravity_force = -8
 
-        self.update()
-
     def update(self, task):
         # Pin to floor
         if self.obj.getZ() <= self.gravity_floor:
