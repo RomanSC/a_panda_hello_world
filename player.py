@@ -19,11 +19,6 @@ class Player(Actor):
 
         self.moving = None
 
-        # self.models = "assets/models/figures/gray_boy.egg"
-
-        # self = Actor("assets/models/figures/gray_boy.egg",
-        #                     {"run": "assets/models/figures/gray_boy.egg",
-        #                      "walk": "assets/models/figures/gray_boy.egg"})
         self.loadModel("assets/models/figures/gray_boy.egg",
                        "gray_boy_body")
 
