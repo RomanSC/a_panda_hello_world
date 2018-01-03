@@ -25,13 +25,17 @@ class Player(Actor):
         self.start_pos = (0, 0, 0)
         self.start_hpr = (0, 0, 0)
 
-        self.speed_modes = {"walk": 10, "run": 15, "sprint": 30}
+        # Based on human average walk, jog, and run speeds
+        self.speed_modes = {"walk": 1.4, "run": 2.68224, "sprint": 12.5171}
         self.speed_default = self.speed_modes["run"]
         self.speed = self.speed_modes["run"]
 
         self.turn_speed = 60
 
-        self.jump_height = 10
+        # Based on human average of 20"
+        # TODO: Fine tune to be more
+        # 'athletic' and playable
+        self.jump_height = 0.508
 
         # self.moving = None
 
