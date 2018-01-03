@@ -50,20 +50,24 @@ from pandac.PandaModules import WindowProperties
 
 from debug_hud import Debug_HUD
 from player import Player
+from update import Update
 
-class Game(ShowBase):
+
+class Alpha(ShowBase):
     def __init__(self):
         super().__init__(self)
         # ShowBase.__init__(self)
 
         self.messenger.toggleVerbose()
+
+        self.start()
+
+    def start(self):
         self.start_done = False
 
         # Disable camera mouse control
         # https://www.panda3d.org/manual/index.php/The_Default_camera_Driver
         # self.disableMouse()
-
-        self.props = WindowProperties()
 
         # Keyboard and Mouse camera control
         # self.useDrive()
@@ -85,51 +89,16 @@ class Game(ShowBase):
         self.init_keys()
 
         self.debug_hud = Debug_HUD(self)
-        self.init_updates()
+        self.update = Update(self)
 
         self.start_done = True
-
-    def init_updates(self):
-        # TODO
-        # Add some task manager
-        # self.taskMgr.add(self.camera_text_task,
-        #                  "camera_text_task")
-
-        self.taskMgr.add(self.track_camera_position_rotation,
-                         "track_camera_position_rotation")
-
-        # self.taskMgr.add(self.debug_hud.update,
-        #                  "debug_hud.update")
-
-        self.taskMgr.add(self.player.track_player_pos_rotation,
-                         "track_player.pos_rotation")
-
-
-        # self.taskMgr.add(self.test_rotate_Player,
-        #                  "test_rotate_Player")
-
-
-        self.taskMgr.add(self.player.player_controller,
-                         "player controller")
-
-    # def set_camera_onscreen_text(self):
-    #     # print("DEBUG: Adjusting view port ...")
-    #     # self.camera.setPos(10, 10, 10)
-    #     # self.camera.setHpr(55, 0, 135)
-
-    #     self.camera_text_pos = (0, 0.90, 0)
-    #     self.camera_info_text = OnscreenText(text="pos:{} hpr:{}".format(
-    #                             self.camera.getPos(),
-    #                             self.camera.getHpr()),
-    #                             pos=self.camera_text_pos)
-    #     # print("DEBUG: DONE!")
 
     def window_properties(self):
         self.window_props = WindowProperties()
         self.window_props.setCursorHidden(False)
 
         self.window_props.setSize(1920, 1200)
-        self.window_props.setFullscreen(True)
+        self.window_props.setFullscreen(False)
 
         self.win.requestProperties(self.window_props)
 
@@ -156,12 +125,6 @@ class Game(ShowBase):
 
     # TODO:
     # make camera a child of the player actor
-
-    def track_camera_position_rotation(self, task):
-        self.camera_position = self.camera.getPos()
-        self.camera_hpr = self.camera.getHpr()
-
-        return task.cont
 
     def initialize_camera(self):
         # TODO:
@@ -358,14 +321,15 @@ class Game(ShowBase):
 
 
 def main():
-    game = Game()
+    scenes = [Alpha]
+    scene = scenes[0]()
     # https://www.panda3d.org/manual/index.php/Starting_Panda3D
 
     # The run() procedure in ShowBase contains the Panda3D main loop. It
     # renders a frame, handles the background tasks, and then repeats. It does
     # not normally return, so it needs to be called only once and must be the
     # last line in your script.
-    game.run()
+    scene.run()
 
 
 if __name__ == "__main__":

@@ -3,8 +3,6 @@
 """
 from direct.actor.Actor import Actor
 
-import inspect
-
 
 class Player(Actor):
     def __init__(self, game):
@@ -15,15 +13,19 @@ class Player(Actor):
         self.pos = (0, 0, 0)
         self.hpr = (0, 0, 0)
 
-        self.walk_speed = 1.0
-        self.run_speed = 1.5
-        self.sprint_speed = 2.5
+        self.speed_modes = {"walk": 1.0, "run": 1.5, "sprint": 2.5}
+        self.speed_default = self.speed_modes["run"]
+        self.speed = self.speed_modes["run"]
+
         self.moving = None
-        self.sprinting = False
+
+        # self.models = "assets/models/figures/gray_boy.egg"
 
         # self = Actor("assets/models/figures/gray_boy.egg",
         #                     {"run": "assets/models/figures/gray_boy.egg",
         #                      "walk": "assets/models/figures/gray_boy.egg"})
+        self.loadModel("assets/models/figures/gray_boy.egg",
+                       "gray_boy_body")
 
         self.reparentTo(self.game.render)
         self.setScale(self.scale)
@@ -37,6 +39,7 @@ class Player(Actor):
                     self.hpr[2])
 
         # Create Player Nodes
+
         # TODO
         # Aiming node, maybe attach camera node to a
         # location directly behind the player and rotate it
@@ -46,39 +49,6 @@ class Player(Actor):
         # Node for the player
         self.node = self.game.render.attachNewNode("player node")
         self.node.reparentTo(self)
-
-    # def getPos(self):
-    #     return self.getPos()
-
-    # def getHpr(self):
-    #     return self.getHpr()
-
-    # def getX(self):
-    #     return self.getX()
-
-    # def getY(self):
-    #     return self.getY()
-
-    # def getZ(self):
-    #     return self.getZ()
-
-    # def getH(self):
-    #     return self.getH()
-
-    # def getP(self):
-    #     return self.getP()
-
-    # def getR(self):
-    #     return self.getR()
-
-    def track_player_pos_rotation(self, task):
-        # Player position set once a frame
-        # rather than many times within
-        # multiple function calls
-        self.pos = self.getPos()
-        self.hpr = self.getHpr()
-
-        return task.cont
 
     def move_forward(self, w):
         if w:
@@ -104,29 +74,28 @@ class Player(Actor):
         elif not d:
             self.moving = None
 
-    def player_sprint_toggle(self, s):
-        if s:
-            self.sprinting = True
-        elif not s:
-            self.sprinting = False
+    def toggle_sprint(self):
+        # if self.sprinting is True:
+        #     self.sprinting = False
+        # elif self.sprinting is False:
+        #     self.sprinting = True
+        if self.speed != self.speed_modes["sprint"]:
+            self.speed = self.speed_modes["sprint"]
+        else:
+            self.speed = self.speed_default
 
     # Movement etc...
-    def player_controller(self, task):
+    def controller(self, task):
         if self.moving == "forward":
-            self.setY(self.getY() + (1 * self.run_speed))
+            self.setY(self.getY() + (1 * self.speed))
 
         if self.moving == "backward":
-            self.setY(self.getY() - (1 * self.run_speed))
+            self.setY(self.getY() - (1 * self.speed))
 
         if self.moving == "left":
-            self.setH(self.getH() + (1 * self.run_speed))
+            self.setH(self.getH() + (1 * self.speed))
 
         if self.moving == "right":
-            self.setH(self.getH() - (1 * self.run_speed))
-
-        if self.sprinting:
-            self.player_speed * 2
+            self.setH(self.getH() - (1 * self.speed))
 
         return task.cont
-
-
