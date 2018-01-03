@@ -3,6 +3,18 @@
 """
 from direct.actor.Actor import Actor
 
+from location import Location
+from physics import Gravity
+
+
+# TODO:
+# rotate_right should eventually become move_right
+# rotate_left should eventually become move_left
+# Cursor position should eventually determine
+# player rotation
+
+# Keys Q and E should cause the player to strafe
+# left and right
 
 class Player(Actor):
     def __init__(self, game):
@@ -16,6 +28,8 @@ class Player(Actor):
         self.speed_modes = {"walk": 1.0, "run": 1.5, "sprint": 2.5}
         self.speed_default = self.speed_modes["run"]
         self.speed = self.speed_modes["run"]
+
+        self.jump_height = 3
 
         self.moving = None
 
@@ -39,6 +53,9 @@ class Player(Actor):
         # Node for the player
         self.node = self.game.render.attachNewNode("player node")
         self.node.reparentTo(self)
+
+        self.location = Location(self.game, self)
+        self.gravity = Gravity(self.game, self)
 
     def move_forward(self, w):
         if w:
@@ -69,6 +86,9 @@ class Player(Actor):
             self.speed = self.speed_modes["sprint"]
         else:
             self.speed = self.speed_default
+
+    def jump(self):
+        self.setZ(self.getZ() + (1 * self.jump_height))
 
     # Movement etc...
     def controller(self, task):

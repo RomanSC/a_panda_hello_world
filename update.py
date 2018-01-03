@@ -16,3 +16,6 @@ class Update:
 
         self.game.taskMgr.add(self.game.player.controller,
                               "player controller")
+
+        self.game.taskMgr.add(self.game.player.gravity.update,
+                              "player gravity")

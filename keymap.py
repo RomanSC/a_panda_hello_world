@@ -6,6 +6,7 @@
 """
 import sys
 
+
 class Keymap:
     def __init__(self, game):
         self.game = game
@@ -17,6 +18,7 @@ class Keymap:
         # lol
 
         self.game.accept("escape", sys.exit, extraArgs=[1])
+
         self.map = {  # "escape":
                       # [sys.exit, 1],
                     "w":
@@ -66,7 +68,10 @@ class Keymap:
                     [self.game.player.rotate_right, [True]],
                     "arrow_right-up":
 
-                    [self.game.player.rotate_right, [False]]}
+                    [self.game.player.rotate_right, [False]],
+
+                    "space-up":
+                    [self.game.player.jump, []]}
 
         for key, val in self.map.items():
             # self.accept(<keystr>, <function>, <args>)
