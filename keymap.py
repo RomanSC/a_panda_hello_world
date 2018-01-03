@@ -11,74 +11,122 @@ class Keymap:
     def __init__(self, game):
         self.game = game
         # TODO:
-        # Fix bug where "escape": sys.exit(1) in self.keymap
+        # Fix bug where "escape": sys.exit(1) in self.map
         # gets executed (for no apparent reason...) when
         # the keymap is loaded in a loop during init process
         # ...
         # lol
+        self.map = {"forward": None, "left": None, "backward": None,
+                    "right": None, "sprint": None, "jump": None}
 
         self.game.accept("escape", sys.exit, extraArgs=[1])
 
-        self.map = {  # "escape":
-                      # [sys.exit, 1],
-                    "w":
-                    [self.game.player.move_forward, [True]],
+        # Keys down
+        self.game.accept("w", self.setKey, ["forward", True])
+        self.game.accept("a", self.setKey, ["left", True])
+        self.game.accept("s", self.setKey, ["backward", True])
+        self.game.accept("d", self.setKey, ["right", True])
+        self.game.accept("arrow_up", self.setKey, ["forward", True])
+        self.game.accept("arrow_left", self.setKey, ["left", True])
+        self.game.accept("arrow_down", self.setKey, ["backward", True])
+        self.game.accept("arrow_right", self.setKey, ["right", True])
+        self.game.accept("w", self.setKey, ["forward", True])
+        self.game.accept("a", self.setKey, ["left", True])
+        self.game.accept("s", self.setKey, ["backward", True])
+        self.game.accept("d", self.setKey, ["right", True])
+        self.game.accept("arrow_up", self.setKey, ["forward", True])
+        self.game.accept("arrow_left", self.setKey, ["left", True])
+        self.game.accept("arrow_down", self.setKey, ["backward", True])
+        self.game.accept("arrow_right", self.setKey, ["right", True])
+        self.game.accept("shift", self.setKey, ["sprint", True])
 
-                    "w-up":
-                    [self.game.player.move_forward, [False]],
+        # Shift + Keys down
+        # self.game.accept("shift-w", self.setKey, ["forward", True])
+        # self.game.accept("shift-w", self.setKey, ["sprint", True])
+        # self.game.accept("shift-a", self.setKey, ["left", True])
+        # self.game.accept("shift-a", self.setKey, ["sprint", True])
+        # self.game.accept("shift-s", self.setKey, ["backward", True])
+        # self.game.accept("shift-s", self.setKey, ["sprint", True])
+        # self.game.accept("shift-d", self.setKey, ["right", True])
+        # self.game.accept("shift-d", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_up", self.setKey, ["forward", True])
+        # self.game.accept("shift-arrow_up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_left", self.setKey, ["left", True])
+        # self.game.accept("shift-arrow_left", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_down", self.setKey, ["backward", True])
+        # self.game.accept("shift-arrow_down", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_right", self.setKey, ["right", True])
+        # self.game.accept("shift-arrow_right", self.setKey, ["sprint", True])
+        # self.game.accept("shift-w", self.setKey, ["forward", True])
+        # self.game.accept("shift-w", self.setKey, ["sprint", True])
+        # self.game.accept("shift-a", self.setKey, ["left", True])
+        # self.game.accept("shift-a", self.setKey, ["sprint", True])
+        # self.game.accept("shift-s", self.setKey, ["backward", True])
+        # self.game.accept("shift-s", self.setKey, ["sprint", True])
+        # self.game.accept("shift-d", self.setKey, ["right", True])
+        # self.game.accept("shift-d", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_up", self.setKey, ["forward", True])
+        # self.game.accept("shift-arrow_up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_left", self.setKey, ["left", True])
+        # self.game.accept("shift-arrow_left", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_down", self.setKey, ["backward", True])
+        # self.game.accept("shift-arrow_down", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_right", self.setKey, ["right", True])
+        # self.game.accept("shift-arrow_right", self.setKey, ["sprint", True])
 
-                    "a":
-                    [self.game.player.rotate_left, [True]],
+        # Keys up
+        self.game.accept("w-up", self.setKey, ["forward", False])
+        self.game.accept("a-up", self.setKey, ["left", False])
+        self.game.accept("s-up", self.setKey, ["backward", False])
+        self.game.accept("d-up", self.setKey, ["right", False])
+        self.game.accept("arrow_up-up", self.setKey, ["forward", False])
+        self.game.accept("arrow_left-up", self.setKey, ["left", False])
+        self.game.accept("arrow_down-up", self.setKey, ["backward", False])
+        self.game.accept("arrow_right-up", self.setKey, ["right", False])
+        self.game.accept("w-up", self.setKey, ["forward", False])
+        self.game.accept("a-up", self.setKey, ["left", False])
+        self.game.accept("s-up", self.setKey, ["backward", False])
+        self.game.accept("d-up", self.setKey, ["right", False])
+        self.game.accept("arrow_up-up", self.setKey, ["forward", False])
+        self.game.accept("arrow_left-up", self.setKey, ["left", False])
+        self.game.accept("arrow_down-up", self.setKey, ["backward", False])
+        self.game.accept("arrow_right-up", self.setKey, ["right", False])
+        self.game.accept("shift-up", self.setKey, ["sprint", False])
+        self.game.accept("space-up", self.setKey, ["jump", True])
 
-                    "a-up":
-                    [self.game.player.rotate_left, [False]],
+        # Shift + Keys up
+        # self.game.accept("shift-w-up", self.setKey, ["forward", True])
+        # self.game.accept("shift-w-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-a-up", self.setKey, ["left", True])
+        # self.game.accept("shift-a-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-s-up", self.setKey, ["backward", True])
+        # self.game.accept("shift-s-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-d-up", self.setKey, ["right", True])
+        # self.game.accept("shift-d-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_up-up", self.setKey, ["forward", True])
+        # self.game.accept("shift-arrow_up-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_left-up", self.setKey, ["left", True])
+        # self.game.accept("shift-arrow_left-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_down-up", self.setKey, ["backward", True])
+        # self.game.accept("shift-arrow_down-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_right-up", self.setKey, ["right", True])
+        # self.game.accept("shift-arrow_right-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-w-up", self.setKey, ["forward", True])
+        # self.game.accept("shift-w-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-a-up", self.setKey, ["left", True])
+        # self.game.accept("shift-a-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-s-up", self.setKey, ["backward", True])
+        # self.game.accept("shift-s-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-d-up", self.setKey, ["right", True])
+        # self.game.accept("shift-d-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_up-up", self.setKey, ["forward", True])
+        # self.game.accept("shift-arrow_up-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_left-up", self.setKey, ["left", True])
+        # self.game.accept("shift-arrow_left-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_down-up", self.setKey, ["backward", True])
+        # self.game.accept("shift-arrow_down-up", self.setKey, ["sprint", True])
+        # self.game.accept("shift-arrow_right-up", self.setKey, ["right", True])
+        # self.game.accept("shift-arrow_right-up", self.setKey, ["sprint", True])
 
-                    "s":
-                    [self.game.player.move_backward, [True]],
-
-                    "s-up":
-                    [self.game.player.move_backward, [False]],
-
-                    "d":
-                    [self.game.player.rotate_right, [True]],
-
-                    "d-up":
-                    [self.game.player.rotate_right, [False]],
-
-                    "arrow_up":
-                    [self.game.player.move_forward, [True]],
-
-                    "arrow_up-up":
-                    [self.game.player.move_forward, [False]],
-
-                    "arrow_left":
-                    [self.game.player.rotate_left, [True]],
-
-                    "arrow_left-up":
-                    [self.game.player.rotate_left, [False]],
-
-                    "arrow_down":
-                    [self.game.player.move_backward, [True]],
-
-                    "arrow_down-up":
-                    [self.game.player.move_backward, [False]],
-
-                    "arrow_right":
-
-                    [self.game.player.rotate_right, [True]],
-                    "arrow_right-up":
-
-                    [self.game.player.rotate_right, [False]],
-
-                    "space-up":
-                    [self.game.player.jump, []]}
-
-        for key, val in self.map.items():
-            # self.accept(<keystr>, <function>, <args>)
-            print(key,
-                  self.map[key][0],
-                  self.map[key][1])
-
-            self.game.accept(key,
-                             self.map[key][0],
-                             extraArgs=list(self.map[key][1]))
+    def setKey(self, key, val):
+        self.map[key] = val

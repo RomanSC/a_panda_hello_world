@@ -31,7 +31,7 @@ class Player(Actor):
 
         self.jump_height = 3
 
-        self.moving = None
+        # self.moving = None
 
         self.loadModel("assets/models/figures/gray_boy.egg",
                        "gray_boy_body")
@@ -57,57 +57,46 @@ class Player(Actor):
         self.location = Location(self.game, self)
         self.gravity = Gravity(self.game, self)
 
-    def move_forward(self, w):
-        if w:
-            self.moving = "forward"
-        elif not w:
-            self.moving = None
-
-    def rotate_left(self, a):
-        if a:
-            self.moving = "left"
-        elif not a:
-            self.moving = None
-
-    def move_backward(self, s):
-        if s:
-            self.moving = "backward"
-        elif not s:
-            self.moving = None
-
-    def rotate_right(self, d):
-        if d:
-            self.moving = "right"
-        elif not d:
-            self.moving = None
-
-    def toggle_sprint(self):
-        if self.speed != self.speed_modes["sprint"]:
-            self.speed = self.speed_modes["sprint"]
-        else:
-            self.speed = self.speed_default
+    # def toggle_sprint(self):
+    #     if self.speed != self.speed_modes["sprint"]:
+    #         self.speed = self.speed_modes["sprint"]
+    #     else:
+    #         self.speed = self.speed_default
 
     def jump(self):
-        self.setZ(self.getZ() + (1 * self.jump_height))
+        self.setPos(self, (0, 0, (1 * self.jump_height)))
+
+        self.game.keymap.map["jump"] = False
 
     # Movement etc...
     def controller(self, task):
-        if self.moving == "forward":
+        # Navigation
+        if self.game.keymap.map["forward"]:
             # self.setY(self.getY() + (1 * self.speed))
             self.setPos(self, (0, (1 * self.speed), 0))
 
-        if self.moving == "backward":
-            # self.setY(self.getY() - (1 * self.speed))
-            self.setPos(self, (0, -(1 * self.speed), 0))
-
-        if self.moving == "left":
+        if self.game.keymap.map["left"]:
             self.setH(self.getH() + (1 * self.speed))
             # For move_left
             # self.setPos(self, ((1 * self.speed), 0, 0))
 
-        if self.moving == "right":
+        if self.game.keymap.map["backward"]:
+            # self.setY(self.getY() - (1 * self.speed))
+            self.setPos(self, (0, -(1 * self.speed), 0))
+
+        if self.game.keymap.map["right"]:
             self.setH(self.getH() - (1 * self.speed))
             # For move_right
             # self.setPos(self, (-(1 * self.speed), 0, 0))
+
+        # Jump
+        if self.game.keymap.map["jump"]:
+            self.jump()
+
+        if self.game.keymap.map["sprint"]:
+            # self.toggle_sprint()
+            self.speed = self.speed_modes["sprint"]
+        elif not self.game.keymap.map["sprint"]:
+            self.speed = self.speed_default
 
         return task.cont
