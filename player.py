@@ -84,13 +84,13 @@ class Player(Actor):
             self.setPos(self, (0, ((1 * self.speed) * dt), 0))
 
         if self.game.keymap.map["left"]:
-            self.setH(self.getH() + ((1 * self.speed) * dt))
+            self.setH(self.getH() + ((1 * self.turn_speed) * dt))
             # For move_left
             # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
 
         if self.game.keymap.map["backward"]:
             # self.setY(self.getY() - (1 * self.speed))
-            self.setPos(self, (0, -((1 * self.turn_speed) * dt), 0))
+            self.setPos(self, (0, -((1 * self.speed) * dt), 0))
 
         if self.game.keymap.map["right"]:
             self.setH(self.getH() + -((1 * self.turn_speed) * dt))
