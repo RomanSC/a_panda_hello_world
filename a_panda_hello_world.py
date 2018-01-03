@@ -49,6 +49,7 @@ from pandac.PandaModules import WindowProperties
 # https://www.panda3d.org/manual/index.php/Compass_Effects
 
 from debug_hud import Debug_HUD
+from player import Player
 
 class Game(ShowBase):
     def __init__(self):
@@ -79,7 +80,7 @@ class Game(ShowBase):
         # self.set_camera_onscreen_text()
         self.window_properties()
         self.mouse_and_cursor()
-        self.init_player()
+        self.player = Player(self)
         self.initialize_camera()
         self.init_keys()
 
@@ -100,16 +101,16 @@ class Game(ShowBase):
         # self.taskMgr.add(self.debug_hud.update,
         #                  "debug_hud.update")
 
-        self.taskMgr.add(self.track_player_position_rotation,
-                         "track_player_position_rotation")
+        self.taskMgr.add(self.player.track_player_pos_rotation,
+                         "track_player.pos_rotation")
 
 
         # self.taskMgr.add(self.test_rotate_Player,
         #                  "test_rotate_Player")
 
 
-        self.taskMgr.add(self.player_controller_task,
-                         "self.player_controller_task")
+        self.taskMgr.add(self.player.player_controller,
+                         "player controller")
 
     # def set_camera_onscreen_text(self):
     #     # print("DEBUG: Adjusting view port ...")
@@ -180,15 +181,15 @@ class Game(ShowBase):
         self.camera_Node.setHpr(0, 0, 0)
 
         self.camera.reparentTo(self.camera_Node)
-        self.camera_Node.reparentTo(self.player_Node)
+        self.camera_Node.reparentTo(self.player.node)
 
         self.camera.setPos(0, -35, 18)  # X=left/right, Y=zoom, Z=Up/down.
         self.camera.setHpr(0, -25, 0)   # Heading, pitch, roll.
 
     # def initialize_camera(self):
-    #     self.camera.setPos(self.player_position[0],
-    #                        self.player_position[1] - 16,
-    #                        self.player_position[2] + 8)
+    #     self.camera.setPos(self.player.pos[0],
+    #                        self.player.pos[1] - 16,
+    #                        self.player.pos[2] + 8)
 
     #     self.camera_zoom_level = 10
     #     self.camera_zoom_increment = 1
@@ -199,9 +200,9 @@ class Game(ShowBase):
     #     # Zoom on scroll
     #     self.camera_zoom_level += a
 
-    #     x = self.player_position[0]
-    #     y = self.player_position[1] + self.camera_zoom_level
-    #     z = self.player_position[2] + 8
+    #     x = self.player.pos[0]
+    #     y = self.player.pos[1] + self.camera_zoom_level
+    #     z = self.player.pos[2] + 8
 
     #     if y > self.camera_zoom_range[0]:
     #         # print("DEBUG: {} > self.camera_zoom_range[0]".format(y))
@@ -215,20 +216,20 @@ class Game(ShowBase):
 
     #     self.camera.setPos(x, y, z)
 
-    #     # print("DEBUG:\nself.player_position = {}\nself.camera_zoom_level = {}"
-    #     #       .format(self.player_position,
+    #     # print("DEBUG:\nself.player.pos = {}\nself.camera_zoom_level = {}"
+    #     #       .format(self.player.pos,
     #     #               self.camera_zoom_level))
 
     #     # Rotation
-    #     # self.camera.setHpr(self.player_hpr[0],
-    #     #                    self.player_hpr[1] - 25,
-    #     #                    self.player_hpr[2])
+    #     # self.camera.setHpr(self.player.hpr[0],
+    #     #                    self.player.hpr[1] - 25,
+    #     #                    self.player.hpr[2])
 
     # # def camera_controller_Task(self, task):
     # #     # def zoom(a):
-    # #     #     self.camera.setPos((self.player_position[0]),
-    # #     #                        (self.player_position[0] + a),
-    # #     #                        (self.player_position[0]))
+    # #     #     self.camera.setPos((self.player.pos[0]),
+    # #     #                        (self.player.pos[0] + a),
+    # #     #                        (self.player.pos[0]))
 
     # #     self.accept("wheel_up", self.zoom(-1))
     # #     self.accept("wheel_down", self.zoom(1))
@@ -284,135 +285,6 @@ class Game(ShowBase):
         self.ground_object.reparentTo(self.render)
         # print("DEBUG: DONE!")
 
-    # def test_rotate_Player(self, task):
-    #     self.player.setHpr(self.player_hpr[0] + 1, # Z, up/down axis
-    #                        self.player_hpr[1],
-    #                        self.player_hpr[2])
-
-    #     return task.cont
-
-    def track_player_position_rotation(self, task):
-        # Player position set once a frame
-        # rather than many times within
-        # multiple function calls
-        self.player_position = self.player.getPos()
-        self.player_hpr = self.player.getHpr()
-
-
-        return task.cont
-
-    def player_movement_forward(self, w):
-        if w:
-            self.player_moving = "forward"
-        elif not w:
-            self.player_moving = None
-
-    def player_movement_left(self, a):
-        if a:
-            self.player_moving = "left"
-        elif not a:
-            self.player_moving = None
-
-
-    def player_movement_backward(self, s):
-        if s:
-            self.player_moving = "backward"
-        elif not s:
-            self.player_moving = None
-
-    def player_movement_right(self, d):
-        if d:
-            self.player_moving = "right"
-        elif not d:
-            self.player_moving = None
-
-    def player_sprint_toggle(self, s):
-        if s:
-            self.player_sprinting = True
-        elif not s:
-            self.player_sprinting = False
-
-    def player_controller_task(self, task):
-
-        # Movement
-        if self.player_moving == "forward":
-            self.player.setPos(self.player_position[0],
-                               self.player_position[1] +
-                               (1 * self.player_speed),
-                               self.player_position[2])
-
-        if self.player_moving == "backward":
-            self.player.setPos(self.player_position[0],
-                               self.player_position[1] -
-                               (1 * self.player_speed),
-                               self.player_position[2])
-
-        # X=left/right, Y=zoom, Z=Up/down.
-        # Heading, pitch, roll.
-
-        if self.player_moving == "left":
-            self.player.setHpr(self.player.getHpr()[0] +
-                               (1 * self.player_speed),
-                               self.player.getHpr()[1],
-                               self.player.getHpr()[2])
-
-        if self.player_moving == "right":
-            self.player.setHpr(self.player.getHpr()[0] -
-                               (1 * self.player_speed),
-                               self.player.getHpr()[1],
-                               self.player.getHpr()[2])
-
-        if self.player_sprinting:
-            self.player_speed * 2
-
-        # print("DEBUG: w = {} a = {} s = {} d = {}".format(
-        #         self.player_moving_Forward,
-        #         self.player_rotating_Left,
-        #         self.player_moving_Backward,
-        #         self.player_rotating_Right))
-
-        return task.cont
-
-    def init_player(self):
-        self.player_scale = (0, 0, 0)
-        self.player_position = (0, 0, 0)
-        self.player_hpr = (0, 0, 0)
-
-        self.player_speed = 1.5
-
-        # self.player_moving_Forward = False
-        # self.player_moving_Backward = False
-        # self.player_rotating_Left = False
-        # self.player_rotating_Right = False
-        self.player_moving = None
-        self.player_sprinting = False
-
-        self.player = Actor("assets/models/figures/gray_boy.egg",
-                            {"run": "assets/models/figures/gray_boy.egg",
-                             "walk": "assets/models/figures/gray_boy.egg"})
-
-        self.player.reparentTo(self.render)
-
-        self.player.setScale(0.2)
-
-        self.player.setPos(self.player_position[0],
-                           self.player_position[1],
-                           self.player_position[2])
-
-        self.player.setHpr(0, 0, 0)
-
-        # Create Player Node
-
-        # Node for player turn
-        self.turn_Node = self.render.attachNewNode("turn_Node")
-
-        # Node for the player
-        self.player_Node = self.render.attachNewNode("player_Node")
-        self.player_Node.reparentTo(self.player)
-
-        # camera_Node becomes a child of player_Node in
-        # self.initialize_camera
-
     def init_keys(self):
         # TODO:
         # Fix bug where "escape": sys.exit(1) in self.keymap
@@ -426,53 +298,53 @@ class Game(ShowBase):
                          # [sys.exit, 1],
 
                        "w":
-                       [self.player_movement_forward, [True]],
+                       [self.player.move_forward, [True]],
 
                        "w-up":
-                       [self.player_movement_forward, [False]],
+                       [self.player.move_forward, [False]],
 
                        "a":
-                       [self.player_movement_left, [True]],
+                       [self.player.move_left, [True]],
 
                        "a-up":
-                       [self.player_movement_left, [False]],
+                       [self.player.move_left, [False]],
 
                        "s":
-                       [self.player_movement_backward, [True]],
+                       [self.player.move_backward, [True]],
 
                        "s-up":
-                       [self.player_movement_backward, [False]],
+                       [self.player.move_backward, [False]],
 
                        "d":
-                       [self.player_movement_right, [True]],
+                       [self.player.move_right, [True]],
 
                        "d-up":
-                       [self.player_movement_right, [False]],
+                       [self.player.move_right, [False]],
 
                        "arrow_up":
-                       [self.player_movement_forward, [True]],
+                       [self.player.move_forward, [True]],
 
                        "arrow_up-up":
-                       [self.player_movement_forward, [False]],
+                       [self.player.move_forward, [False]],
 
                        "arrow_left":
-                       [self.player_movement_left, [True]],
+                       [self.player.move_left, [True]],
 
                        "arrow_left-up":
-                       [self.player_movement_left, [False]],
+                       [self.player.move_left, [False]],
 
                        "arrow_down":
-                       [self.player_movement_backward, [True]],
+                       [self.player.move_backward, [True]],
 
                        "arrow_down-up":
-                       [self.player_movement_backward, [False]],
+                       [self.player.move_backward, [False]],
 
                        "arrow_right":
 
-                       [self.player_movement_right, [True]],
+                       [self.player.move_right, [True]],
                        "arrow_right-up":
 
-                       [self.player_movement_right, [False]]}
+                       [self.player.move_right, [False]]}
 
         for key, val in self.keymap.items():
             # self.accept(<keystr>, <function>, <args>)
