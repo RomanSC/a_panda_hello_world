@@ -9,18 +9,23 @@
 # from panda3d.core import CollisionHandler
 # from panda3d.core import CollisionNode
 
-from panda3d.core import GraphicsEngine
-from panda3d.core import GraphicsPipe
-from panda3d.core import FrameBufferProperties
-from panda3d.core import WindowProperties
-from panda3d.core import Texture
+# from panda3d.core import GraphicsEngine
+# from panda3d.core import GraphicsPipe
+# from panda3d.core import FrameBufferProperties
+# from panda3d.core import WindowProperties
+# from panda3d.core import Texture
 # from panda3d.core import BitMask
 # from panda3d.core import BitMask16
-from panda3d.core import BitMask32
+# from panda3d.core import BitMask32
 # from panda3d.core import BitMask64
-from panda3d.core import Point3
-from panda3d.core import Vec3
-from panda3d.core import PNMImage
+# from panda3d.core import Point3
+# from panda3d.core import Vec3
+# from panda3d.core import PNMImage
+from direct.showbase.ShowBase import Plane
+from direct.showbase.ShowBase import ShowBase
+from direct.showbase.ShowBase import Vec3
+from direct.showbase.ShowBase import Point3
+from direct.showbase.ShowBase import CardMaker
 
 
 class CameraController:
@@ -44,7 +49,8 @@ class CameraController:
         self.game.camera.setPos(*self.start_pos)
         self.game.camera.setHpr(*self.start_hpr)
 
-        self.depth_camera = DepthCamera(self.game)
+        # self.depth_camera = DepthCamera(self.game)
+        self.mouse_pointer = MousePointer(self.game)
 
     def update(self, task):
         # Zoom
@@ -83,109 +89,143 @@ class CameraController:
 
         # self.game.player.setH(angle)
         # print(self.depth_camera.get_point())
-
         return task.cont
 
 
-class DepthCamera:
+class MousePointer:
     def __init__(self, game):
         self.game = game
+        # self.camera.setPos(0, 60, 25)
+        # self.camera.lookAt(0, 0, 0)
+        z = 0
+        self.plane = Plane(Vec3(0, 0, 1), Point3(0, 0, z))
+        # self.model = loader.loadModel("jack")
+        # self.model.reparentTo(render)
 
-        pipe = self.game.win.get_pipe()
-        ge = GraphicsEngine(pipe)
-        self.graphics_engine = ge
-        frame_buff_props = FrameBufferProperties()
-        frame_buff_props.set_depth_bits(24)
-        window_props = WindowProperties.get_default()
+        cm = CardMaker("blah")
+        cm.setFrame(-100, 100, -100, 100)
 
-        output = self.graphics_engine.make_output(pipe,
-                                                  "depth buffer",
-                                                  1,
-                                                  frame_buff_props,
-                                                  window_props,
-                                                  GraphicsPipe.BF_refuse_window)
+        self.game.render.attachNewNode(cm.generate()).lookAt(0, 0, -1)
+        # taskMgr.add(self.__getMousePos, "_YourClass__getMousePos")
 
-        self.depth_texture = Texture("depth texture")
-        self.depth_texture.set_format(Texture.F_depth_component)
+        self.pos = None
 
-        buffer = output.make_texture_buffer("buffer",
-                                            1,
-                                            1,
-                                            self.depth_texture,
-                                            to_ram=True,
-                                            fbp=frame_buff_props)
-        assert buffer
+    def get_point(self, task):
+        if self.game.mouseWatcherNode.hasMouse():
+            mpos = self.game.mouseWatcherNode.getMouse()
+            pos_3d = Point3()
+            nearPoint = Point3()
+            farPoint = Point3()
 
-        self.origin = self.game.make_camera(buffer)
-        node = self.origin.node()
-        self.mask = BitMask32.bit(21)
-        node.set_camera_mask(self.mask)
-        self.lens = node.get_lens()
-        self.lens.set_fov(.1)
-        self.mouse_watcher = self.game.mouseWatcherNode
-        self.main_camera_lens = self.game.camLens
+            self.game.camLens.extrude(mpos, nearPoint, farPoint)
 
-        self.pos = Point3()
-        self.direction_vec = Vec3()
+            if self.plane.intersectsLine(pos_3d,
+               self.game.render.getRelativePoint(self.game.camera, nearPoint),
+               self.game.render.getRelativePoint(self.game.camera, farPoint)):
+                # print "Mouse ray intersects ground plane at ", pos_3d
+                # self.model.setPos(render, pos_3d)
+                self.pos = pos_3d
+        return task.again
 
-    def update(self, task):
-        if not self.mouse_watcher.has_mouse():
-            return task.cont
+# class DepthCamera:
+#     def __init__(self, game):
+#         self.game = game
 
-        mouse_pos = self.mouse_watcher.get_mouse()
-        far_point = Point3()
+#         pipe = self.game.win.get_pipe()
+#         ge = GraphicsEngine(pipe)
+#         self.graphics_engine = ge
+#         frame_buff_props = FrameBufferProperties()
+#         frame_buff_props.set_depth_bits(24)
+#         window_props = WindowProperties.get_default()
 
-        self.main_camera_lens.extrude(mouse_pos,
-                                      Point3(),
-                                      far_point)
+#         output = self.graphics_engine.make_output(pipe,
+#                                                   "depth buffer",
+#                                                   1,
+#                                                   frame_buff_props,
+#                                                   window_props,
+#                                                   GraphicsPipe.BF_refuse_window)
 
-        self.origin.look_at(far_point)
-        self.pos = self.origin.get_pos(self.game.render)
+#         self.depth_texture = Texture("depth texture")
+#         self.depth_texture.set_format(Texture.F_depth_component)
 
-        self.direction_vec = self.game.render.get_relative_vector(self.origin,
-                                                                  Vec3.forward())
+#         buffer = output.make_texture_buffer("buffer",
+#                                             1,
+#                                             1,
+#                                             self.depth_texture,
+#                                             to_ram=True,
+#                                             fbp=frame_buff_props)
+#         assert buffer
 
-        return task.cont
+#         self.origin = self.game.make_camera(buffer)
+#         node = self.origin.node()
+#         self.mask = BitMask32.bit(21)
+#         node.set_camera_mask(self.mask)
+#         self.lens = node.get_lens()
+#         self.lens.set_fov(.1)
+#         self.mouse_watcher = self.game.mouseWatcherNode
+#         self.main_camera_lens = self.game.camLens
 
-    def get_point(self):
-        self.graphics_engine.render_frame()
+#         self.pos = Point3()
+#         self.direction_vec = Vec3()
 
-        img = PNMImage(1, 1)
-        self.depth_texture.store(img)
-        pixel = img.get_xel(0, 0)
-        point = Point3()
+#     def update(self, task):
+#         if not self.mouse_watcher.has_mouse():
+#             return task.cont
 
-        self.lens.extrude_depth(Point3(0.,
-                                0.,
-                                pixel[2]),
-                                point)
+#         mouse_pos = self.mouse_watcher.get_mouse()
+#         far_point = Point3()
 
-        depth = point[1] * .5
+#         self.main_camera_lens.extrude(mouse_pos,
+#                                       Point3(),
+#                                       far_point)
 
-        if depth > 100.:
-            offset = 1.1
+#         self.origin.look_at(far_point)
+#         self.pos = self.origin.get_pos(self.game.render)
 
-            self.origin.set_y(self.origin,
-                              depth - offset)
+#         self.direction_vec = self.game.render.get_relative_vector(self.origin,
+#                                                                   Vec3.forward())
 
-            self.graphics_engine.render_frame()
+#         return task.cont
 
-            img = PNMImage(1, 1)
-            self.depth_texture.store(img)
-            pixel = img.get_xel(0, 0)
-            point = Point3()
+#     def get_point(self):
+#         self.graphics_engine.render_frame()
 
-            self.lens.extrude_depth(Point3(0.0, 0.0,
-                                    pixel[2]),
-                                    point)
+#         img = PNMImage(1, 1)
+#         self.depth_texture.store(img)
+#         pixel = img.get_xel(0, 0)
+#         point = Point3()
 
-            depth2 = point[1] * .5
+#         self.lens.extrude_depth(Point3(0.,
+#                                 0.,
+#                                 pixel[2]),
+#                                 point)
 
-            depth += depth2 - offset
+#         depth = point[1] * .5
 
-            self.origin.set_pos(0., 0., 0.)
+#         if depth > 100.:
+#             offset = 1.1
 
-        return self.pos + self.direction_vec * depth
+#             self.origin.set_y(self.origin,
+#                               depth - offset)
 
-    def get_mask(self):
-        return self.mask
+#             self.graphics_engine.render_frame()
+
+#             img = PNMImage(1, 1)
+#             self.depth_texture.store(img)
+#             pixel = img.get_xel(0, 0)
+#             point = Point3()
+
+#             self.lens.extrude_depth(Point3(0.0, 0.0,
+#                                     pixel[2]),
+#                                     point)
+
+#             depth2 = point[1] * .5
+
+#             depth += depth2 - offset
+
+#             self.origin.set_pos(0., 0., 0.)
+
+#         return self.pos + self.direction_vec * depth
+
+#     def get_mask(self):
+#         return self.mask

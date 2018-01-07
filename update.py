@@ -26,6 +26,9 @@ class Update:
         self.game.taskMgr.add(self.game.camera_controller.update,
                               "camera controller")
 
-        self.game.taskMgr.add(self.game.camera_controller.depth_camera.update,
-                              "update depth camera",
-                              sort=45)
+        # self.game.taskMgr.add(self.game.camera_controller.depth_camera.update,
+        #                       "update depth camera",
+        #                       sort=45)
+
+        self.game.taskMgr.add(self.game.camera_controller.mouse_pointer.get_point,
+                              "get 3d mouse position")

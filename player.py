@@ -120,9 +120,12 @@ class Player(Actor):
         #     self.setH(self.getH() + -((1 * self.turn_speed) * dt))
         #     # For move_right
         #     # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
+
         # Rotation
-        hpr = self.game.camera_controller.depth_camera.get_point()
-        self.setHpr(hpr[0], 0, 0)
+        mouse_pointer = self.game.camera_controller.mouse_pointer.pos
+
+        # TODO:
+        # self.setHpr(<based on mouse pointer position>)
 
         # Jump
         if self.game.keymap.map["jump"]:
