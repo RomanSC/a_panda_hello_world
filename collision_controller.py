@@ -18,4 +18,4 @@ class CollisionController:
         # traverser.addCollider(fromObject, handler)
 
         # Show collisions
-        traverser.showCollisions(self.game.render)
+        # traverser.showCollisions(self.game.render)

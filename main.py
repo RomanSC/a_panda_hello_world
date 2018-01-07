@@ -7,11 +7,16 @@
     https://www.panda3d.org/manual/index.php/A_Panda3D_Hello_World_Tutorial
 
 """
+import os
+import sys
+
 from direct.showbase.ShowBase import ShowBase
+
+# CD to current dir
+# os.chdir(os.path.realpath(os.path.dirname(__file__)))
+
 from panda3d.core import loadPrcFileData
-# from panda3d.core import loadPrcFile
-# loadPrcFile("config/Config.prc")
-from pandac.PandaModules import loadPrcFileData
+from panda3d.core import loadPrcFileData
 loadPrcFileData("", "sync-video false")
 loadPrcFileData("", "sync-video #t")
 loadPrcFileData("", "depth-bits 24")
@@ -29,12 +34,10 @@ from update import Update
 from lighting import Lighting
 from collision_controller import CollisionController
 
-import sys
 
 class Game(ShowBase):
     def __init__(self):
         super().__init__(self)
-        # ShowBase.__init__(self)
 
         self.messenger.toggleVerbose()
 
@@ -43,7 +46,6 @@ class Game(ShowBase):
 
     def init_render_pipeline(self):
         sys.path.insert(0, "./lib/RenderPipeline")
-        # sys.path.insert(0, "../../RenderPipeline")
 
         from lib.RenderPipeline.rpcore import RenderPipeline
 
@@ -54,34 +56,16 @@ class Game(ShowBase):
     def start(self):
         self.start_done = False
 
-        # Disable camera mouse control
-        # https://www.panda3d.org/manual/index.php/The_Default_camera_Driver
-        # self.disableMouse()
-
-        # Keyboard and Mouse camera control
-        # self.useDrive()
-
-        # Trackball camera control
-        # self.useTrackball()
-
-        # TODO
-        # Out of Body Experience camera control
-        # self.oobe()
-
+        self.loading_screen = LoadingScreen(self)
         self.init_environment()
         self.window_properties()
 
-        self.loading_screen = LoadingScreen(self)
+        self.lighting = Lighting(self)
         self.player = Player(self)
         self.camera_controller = CameraController(self)
         self.keymap = Keymap(self)
         self.update = Update(self)
         self.collision_controller = CollisionController
-
-        # Interpolate between animation frames
-        # loadPrcFileData("", "interpolate-frames 1")
-
-        # loadPrcFile("config/Config.prc")
 
         self.start_done = True
 
@@ -120,16 +104,8 @@ class Game(ShowBase):
 
 
 def main():
-    scenes = [Game]
-    scene = scenes[0]()
-
-    # https://www.panda3d.org/manual/index.php/Starting_Panda3D
-
-    # The run() procedure in ShowBase contains the Panda3D main loop. It
-    # renders a frame, handles the background tasks, and then repeats. It does
-    # not normally return, so it needs to be called only once and must be the
-    # last line in your script.
-    scene.run()
+    game = Game()
+    game.run()
 
 
 if __name__ == "__main__":

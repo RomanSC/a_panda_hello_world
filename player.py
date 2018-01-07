@@ -27,11 +27,11 @@ class Player(Actor):
         self.start_hpr = (0, 0, 0)
 
         # Based on human average walk, jog, and run speeds
-        self.speed_modes = {"walk": 1.4, "run": 2.68224, "sprint": 12.5171}
+        self.speed_modes = {"walk": 1.4,
+                            "run": 2.68224,
+                            "sprint": 12.5171}
         self.speed_default = self.speed_modes["run"]
         self.speed = self.speed_modes["run"]
-
-        self.turn_speed = 60
 
         self.animation_status = {"walk": False, "run": False, "spring": False}
 
@@ -126,6 +126,10 @@ class Player(Actor):
 
         # TODO:
         # self.setHpr(<based on mouse pointer position>)
+        try:
+            self.look_at(mouse_pointer)
+        except TypeError:
+            pass
 
         # Jump
         if self.game.keymap.map["jump"]:
