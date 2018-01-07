@@ -121,8 +121,8 @@ class Player(Actor):
         #     # For move_right
         #     # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
         # Rotation
-        # hpr = self.game.camera_controller.depth_camera.get_point()
-        # self.setHpr(hpr[0], 0, 0)
+        hpr = self.game.camera_controller.depth_camera.get_point()
+        self.setHpr(hpr[0], 0, 0)
 
         # Jump
         if self.game.keymap.map["jump"]:

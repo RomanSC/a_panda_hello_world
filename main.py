@@ -13,6 +13,8 @@ from panda3d.core import loadPrcFileData
 # loadPrcFile("config/Config.prc")
 from pandac.PandaModules import loadPrcFileData
 loadPrcFileData("", "sync-video false")
+loadPrcFileData("", "sync-video #t")
+loadPrcFileData("", "depth-bits 24")
 
 from panda3d.core import Material
 from panda3d.core import DirectionalLight

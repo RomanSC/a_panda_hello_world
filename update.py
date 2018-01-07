@@ -27,5 +27,5 @@ class Update:
                               "camera controller")
 
         self.game.taskMgr.add(self.game.camera_controller.depth_camera.update,
-                             "update depth camera",
-                             sort=45)
+                              "update depth camera",
+                              sort=45)

@@ -91,34 +91,36 @@ class DepthCamera:
     def __init__(self, game):
         self.game = game
 
-        self.pipe = self.game.win.get_pipe()
-        self.graphics_engine = GraphicsEngine(self.pipe)
-        self.frame_buff_props = FrameBufferProperties()
-        self.frame_buff_props.set_depth_bits(24)
-        self.window_props = WindowProperties.get_default()
+        pipe = self.game.win.get_pipe()
+        ge = GraphicsEngine(pipe)
+        self.graphics_engine = ge
+        frame_buff_props = FrameBufferProperties()
+        frame_buff_props.set_depth_bits(24)
+        window_props = WindowProperties.get_default()
 
-        self.output = self.graphics_engine.make_output(self.pipe,
-                                                       "depth buffer",
-                                                       1,
-                                                       self.frame_buff_props,
-                                                       self.window_props,
-                                                       GraphicsPipe.BF_refuse_window)
+        output = self.graphics_engine.make_output(pipe,
+                                                  "depth buffer",
+                                                  1,
+                                                  frame_buff_props,
+                                                  window_props,
+                                                  GraphicsPipe.BF_refuse_window)
+
         self.depth_texture = Texture("depth texture")
         self.depth_texture.set_format(Texture.F_depth_component)
 
-        buffer = self.output.make_texture_buffer("buffer",
-                                                 1,
-                                                 1,
-                                                 self.depth_texture,
-                                                 to_ram=True,
-                                                 fbp=self.frame_buff_props)
+        buffer = output.make_texture_buffer("buffer",
+                                            1,
+                                            1,
+                                            self.depth_texture,
+                                            to_ram=True,
+                                            fbp=frame_buff_props)
         assert buffer
 
         self.origin = self.game.make_camera(buffer)
-        self.node = self.origin.node()
+        node = self.origin.node()
         self.mask = BitMask32.bit(21)
-        self.node.set_camera_mask(self.mask)
-        self.lens = self.node.get_lens()
+        node.set_camera_mask(self.mask)
+        self.lens = node.get_lens()
         self.lens.set_fov(.1)
         self.mouse_watcher = self.game.mouseWatcherNode
         self.main_camera_lens = self.game.camLens
@@ -130,60 +132,60 @@ class DepthCamera:
         if not self.mouse_watcher.has_mouse():
             return task.cont
 
-        self.mouse_pos = self.mouse_watcher.get_mouse()
-        self.far_point = Point3()
+        mouse_pos = self.mouse_watcher.get_mouse()
+        far_point = Point3()
 
-        self.main_camera_lens.extrude(self.mouse_pos,
+        self.main_camera_lens.extrude(mouse_pos,
                                       Point3(),
-                                      self.far_point)
+                                      far_point)
 
-        self.origin.look_at(self.far_point)
+        self.origin.look_at(far_point)
         self.pos = self.origin.get_pos(self.game.render)
 
         self.direction_vec = self.game.render.get_relative_vector(self.origin,
                                                                   Vec3.forward())
-
 
         return task.cont
 
     def get_point(self):
         self.graphics_engine.render_frame()
 
-        self.img = PNMImage(1, 1)
-        self.depth_texture.store(self.img)
-        self.pixel = self.img.get_xel(0, 0)
+        img = PNMImage(1, 1)
+        self.depth_texture.store(img)
+        pixel = img.get_xel(0, 0)
         point = Point3()
 
         self.lens.extrude_depth(Point3(0.,
-                          0.,
-                          self.pixel[2]),
-                          point)
+                                0.,
+                                pixel[2]),
+                                point)
 
-        self.depth = point[1] * .5
+        depth = point[1] * .5
 
-        if self.depth > 100.:
-            self.offset = 1.1
+        if depth > 100.:
+            offset = 1.1
 
             self.origin.set_y(self.origin,
-                              self.depth - self.offset)
+                              depth - offset)
 
             self.graphics_engine.render_frame()
 
-            self.img = PNMImage(1, 1)
-            self.depth_texture.store(self.img)
-            self.pixel = self.img.get_xel(0, 0)
+            img = PNMImage(1, 1)
+            self.depth_texture.store(img)
+            pixel = img.get_xel(0, 0)
             point = Point3()
 
-            # print(Point3(0.0, 0.0, self.pixel[2]), point)
-
             self.lens.extrude_depth(Point3(0.0, 0.0,
-                              self.pixel[2]),
-                              point)
+                                    pixel[2]),
+                                    point)
 
-            self.depth2 = point[1] * .5
+            depth2 = point[1] * .5
 
-            self.depth += self.depth2 - self.offset
+            depth += depth2 - offset
 
             self.origin.set_pos(0., 0., 0.)
 
-        return self.pos + self.direction_vec * self.depth
+        return self.pos + self.direction_vec * depth
+
+    def get_mask(self):
+        return self.mask
