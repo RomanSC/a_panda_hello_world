@@ -42,7 +42,7 @@ class CameraController:
         # Find out why self.game.camera has no camLens
         # self.game.camera.camLens.setFov(120)
 
-    def controller(self, task):
+    def update(self, task):
         # Zoom
         # camera = self.game.camera
         # if self.game.keymap["zoom-in"]:
