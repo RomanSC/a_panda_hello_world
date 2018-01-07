@@ -8,12 +8,16 @@
 
 """
 from direct.showbase.ShowBase import ShowBase
+from panda3d.core import loadPrcFileData
+# from panda3d.core import loadPrcFile
+# loadPrcFile("config/Config.prc")
+from pandac.PandaModules import loadPrcFileData
+loadPrcFileData("", "sync-video false")
 
 from panda3d.core import Material
-
 from panda3d.core import DirectionalLight
 
-from pandac.PandaModules import WindowProperties
+from panda3d.core import WindowProperties
 
 from loading_screen import LoadingScreen
 from player import Player
@@ -21,9 +25,9 @@ from camera_controller import CameraController
 from keymap import Keymap
 from update import Update
 from lighting import Lighting
+from collision_controller import CollisionController
 
 import sys
-
 
 class Game(ShowBase):
     def __init__(self):
@@ -70,6 +74,13 @@ class Game(ShowBase):
         self.camera_controller = CameraController(self)
         self.keymap = Keymap(self)
         self.update = Update(self)
+        self.collision_controller = CollisionController
+
+        # Interpolate between animation frames
+        # loadPrcFileData("", "interpolate-frames 1")
+
+        # loadPrcFile("config/Config.prc")
+
         self.start_done = True
 
     def window_properties(self):

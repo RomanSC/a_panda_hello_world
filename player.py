@@ -7,7 +7,6 @@ from panda3d.core import Material
 from location import Location
 from physics import Gravity
 
-
 # TODO:
 # rotate_right should eventually become move_right
 # rotate_left should eventually become move_left
@@ -16,6 +15,7 @@ from physics import Gravity
 
 # Keys Q and E should cause the player to strafe
 # left and right
+
 
 class Player(Actor):
     def __init__(self, game):
@@ -33,17 +33,17 @@ class Player(Actor):
 
         self.turn_speed = 60
 
-        self.moving = False
+        self.animation_status = {"walk": False, "run": False, "spring": False}
 
         # Based on human average of 20"
         # TODO: Fine tune to be more
         # "athletic" and playable
         self.jump_height = 0.508
 
-        # self.moving = None
+        # self.animation_status["walk"] = None
 
         self.loadModel("assets/models/figures/man/man.egg")
-        self.loadAnims({"walk": "assets/models/figures/man/man_walk.egg"})
+        self.loadAnims({"walk": "assets/models/figures/man/man_walk-walk.egg"})
 
         self.player_material = Material()
         self.player_material.setShininess(0.0)
@@ -87,6 +87,18 @@ class Player(Actor):
 
         self.game.keymap.map["jump"] = False
 
+    def rotate(self, direction):
+        dt = globalClock.getDt()
+
+        if direction == "left":
+            self.setH(self.getH() + ((1 * self.turn_speed) * dt))
+            # For move_left
+            # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
+        if direction == "right":
+            self.setH(self.getH() + -((1 * self.turn_speed) * dt))
+            # For move_right
+            # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
+
     # Movement etc...
     def controller(self, task):
         dt = globalClock.getDt()
@@ -94,32 +106,23 @@ class Player(Actor):
         if self.game.keymap.map["forward"]:
             # self.setY(self.getY() + (1 * self.speed))
             self.setPos(self, (0, ((1 * self.speed) * dt), 0))
-            self.moving = True
-        else:
-            self.moving = False
 
-        if self.game.keymap.map["left"]:
-            self.setH(self.getH() + ((1 * self.turn_speed) * dt))
-            # For move_left
-            # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
-            self.moving = True
-        else:
-            self.moving = False
+        # if self.game.keymap.map["left"]:
+        #     self.setH(self.getH() + ((1 * self.turn_speed) * dt))
+        #     # For move_left
+        #     # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
 
         if self.game.keymap.map["backward"]:
             # self.setY(self.getY() - (1 * self.speed))
             self.setPos(self, (0, -((1 * self.speed) * dt), 0))
-            self.moving = True
-        else:
-            self.moving = False
 
-        if self.game.keymap.map["right"]:
-            self.setH(self.getH() + -((1 * self.turn_speed) * dt))
-            self.moving = True
-            # For move_right
-            # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
-        else:
-            self.moving = False
+        # if self.game.keymap.map["right"]:
+        #     self.setH(self.getH() + -((1 * self.turn_speed) * dt))
+        #     # For move_right
+        #     # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
+        # Rotation
+        # hpr = self.game.camera_controller.depth_camera.get_point()
+        # self.setHpr(hpr[0], 0, 0)
 
         # Jump
         if self.game.keymap.map["jump"]:
@@ -135,8 +138,17 @@ class Player(Actor):
         return task.cont
 
     def animate(self, task):
-        if self.moving:
-            self.loop("walk")
-            print("DEBUG: Looping walk")
+        if (self.game.keymap.map["forward"] is not False) \
+           or (self.game.keymap.map["backward"] is not False) \
+           or (self.game.keymap.map["left"] is not False) \
+           or (self.game.keymap.map["right"] is not False):
+
+            if not self.animation_status["walk"]:
+                self.loop("walk")
+                self.animation_status["walk"] = True
+        else:
+            if self.animation_status["walk"]:
+                self.stop()
+                self.animation_status["walk"] = False
 
         return task.cont

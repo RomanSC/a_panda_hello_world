@@ -15,9 +15,9 @@ class Keymap:
         self.game.mouseWatcherNode.set_modifier_buttons(ModifierButtons())
         self.game.buttonThrowers[0].node().set_modifier_buttons(ModifierButtons())
 
-        self.map = {"forward": None, "left": None, "backward": None,
-                    "right": None, "sprint": None, "jump": None,
-                    "zoom-in": None, "zoom-out": None}
+        self.map = {"forward": False, "left": False, "backward": False,
+                    "right": False, "sprint": False, "jump": False,
+                    "zoom-in": False, "zoom-out": False}
 
         self.game.accept("escape", sys.exit, extraArgs=[1])
 
