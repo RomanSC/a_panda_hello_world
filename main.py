@@ -20,6 +20,8 @@ from camera import Camera
 from keymap import Keymap
 from update import Update
 
+import sys
+
 
 class Alpha(ShowBase):
     def __init__(self):
@@ -28,7 +30,18 @@ class Alpha(ShowBase):
 
         self.messenger.toggleVerbose()
 
+        self.init_render_pipeline()
         self.start()
+
+    def init_render_pipeline(self):
+        sys.path.insert(0, "./lib/RenderPipeline")
+        # sys.path.insert(0, "../../RenderPipeline")
+
+        from lib.RenderPipeline.rpcore import RenderPipeline
+
+        self.render_pipeline = RenderPipeline()
+        self.render_pipeline.pre_showbase_init()
+        self.render_pipeline.create(self)
 
     def start(self):
         self.start_done = False
@@ -101,7 +114,7 @@ class Alpha(ShowBase):
 
         # Directional light
         self.sun = DirectionalLight("self.sun")
-        self.sun.setColor((1.0, 1.0, 0.8, 1.0))
+        self.sun.setColor((1.0, 1.0, 1, 1.0))
         slnp = self.render.attachNewNode(self.sun)
         slnp.setHpr(0, 0, 0)
         self.render.setLight(slnp)

@@ -21,7 +21,7 @@ class Player(Actor):
         super().__init__(self)
         self.game = game
 
-        self.scale = 0.2
+        self.scale = 1
         self.start_pos = (0, 0, 0)
         self.start_hpr = (0, 0, 0)
 
@@ -34,13 +34,16 @@ class Player(Actor):
 
         # Based on human average of 20"
         # TODO: Fine tune to be more
-        # 'athletic' and playable
+        # "athletic" and playable
         self.jump_height = 0.508
 
         # self.moving = None
 
-        self.loadModel("assets/models/figures/gray_boy.egg",
-                       "gray_boy_body")
+        self.loadModel("assets/models/figures/test_textured_cube.egg")
+
+        # self.loadModel("assets/models/figures/man",
+        #                {"walk": "",
+        #                 "run": ""})
 
         self.reparentTo(self.game.render)
         self.setScale(self.scale)
