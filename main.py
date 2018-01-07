@@ -15,6 +15,7 @@ from panda3d.core import DirectionalLight
 
 from pandac.PandaModules import WindowProperties
 
+from loading_screen import LoadingScreen
 from player import Player
 from camera_controller import CameraController
 from keymap import Keymap
@@ -24,7 +25,7 @@ from lighting import Lighting
 import sys
 
 
-class Alpha(ShowBase):
+class Game(ShowBase):
     def __init__(self):
         super().__init__(self)
         # ShowBase.__init__(self)
@@ -61,13 +62,12 @@ class Alpha(ShowBase):
         # Out of Body Experience camera control
         # self.oobe()
 
-        self.init_sun()
         self.init_environment()
         self.window_properties()
 
+        self.loading_screen = LoadingScreen(self)
         self.player = Player(self)
         self.camera_controller = CameraController(self)
-        # self.test_cam = TestNotCam(self)
         self.keymap = Keymap(self)
         self.update = Update(self)
         self.start_done = True
@@ -80,31 +80,6 @@ class Alpha(ShowBase):
         self.window_props.setFullscreen(False)
 
         self.win.requestProperties(self.window_props)
-
-    def init_sun(self):
-        # print("DEBUG: Loading Sun ... ")
-        # self.directional_light = AmbientLight("Sun")
-        # self.directional_light.setColor((0.2, 0.2, 0.9, 1.0))
-
-        # self.directional_light.setPos(0, 0, 10)
-        # self.directional_light.setHpr(0, 0, 0)
-
-        # Last
-        # self.sun = self.render.attachNewNode(self.directional_light)
-
-        # Directional light
-        self.sun = DirectionalLight("self.sun")
-        self.sun.setColor((1.0, 1.0, 1, 1.0))
-        slnp = self.render.attachNewNode(self.sun)
-        slnp.setHpr(0, 0, 0)
-        self.render.setLight(slnp)
-        # print("DEBUG: DONE!")
-
-        # Ambient light
-        # self.sun = AmbientLight("self.sun")
-        # self.sun.setColor((0, 0, 1.0, 1.0))
-        # sun_node = self.render.attachNewNode(self.sun)
-        # self.render.setLight(sun_node)
 
     def init_environment(self):
         # print("DEBUG: Loading evironment models ...")
@@ -130,9 +105,11 @@ class Alpha(ShowBase):
         self.ground_object.reparentTo(self.render)
         # print("DEBUG: DONE!")
 
+
 def main():
-    scenes = [Alpha]
+    scenes = [Game]
     scene = scenes[0]()
+
     # https://www.panda3d.org/manual/index.php/Starting_Panda3D
 
     # The run() procedure in ShowBase contains the Panda3D main loop. It

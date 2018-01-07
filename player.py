@@ -2,6 +2,7 @@
 """ player.py | Tue, Jan 02, 2018 | Roman S. Collins
 """
 from direct.actor.Actor import Actor
+from panda3d.core import Material
 
 from location import Location
 from physics import Gravity
@@ -32,6 +33,8 @@ class Player(Actor):
 
         self.turn_speed = 60
 
+        self.moving = False
+
         # Based on human average of 20"
         # TODO: Fine tune to be more
         # "athletic" and playable
@@ -39,7 +42,13 @@ class Player(Actor):
 
         # self.moving = None
 
-        self.loadModel("assets/models/figures/test_textured_cube.egg")
+        self.loadModel("assets/models/figures/man/man.egg")
+        self.loadAnims({"walk": "assets/models/figures/man/man_walk.egg"})
+
+        self.player_material = Material()
+        self.player_material.setShininess(0.0)
+        self.player_material.setDiffuse((0.8, 0, 0, 1.0))
+        self.setMaterial(self.player_material)
 
         # self.loadModel("assets/models/figures/man",
         #                {"walk": "",
@@ -85,20 +94,32 @@ class Player(Actor):
         if self.game.keymap.map["forward"]:
             # self.setY(self.getY() + (1 * self.speed))
             self.setPos(self, (0, ((1 * self.speed) * dt), 0))
+            self.moving = True
+        else:
+            self.moving = False
 
         if self.game.keymap.map["left"]:
             self.setH(self.getH() + ((1 * self.turn_speed) * dt))
             # For move_left
             # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
+            self.moving = True
+        else:
+            self.moving = False
 
         if self.game.keymap.map["backward"]:
             # self.setY(self.getY() - (1 * self.speed))
             self.setPos(self, (0, -((1 * self.speed) * dt), 0))
+            self.moving = True
+        else:
+            self.moving = False
 
         if self.game.keymap.map["right"]:
             self.setH(self.getH() + -((1 * self.turn_speed) * dt))
+            self.moving = True
             # For move_right
             # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
+        else:
+            self.moving = False
 
         # Jump
         if self.game.keymap.map["jump"]:
@@ -110,5 +131,12 @@ class Player(Actor):
             self.speed = self.speed_modes["sprint"]
         else:
             self.speed = self.speed_default
+
+        return task.cont
+
+    def animate(self, task):
+        if self.moving:
+            self.loop("walk")
+            print("DEBUG: Looping walk")
 
         return task.cont
