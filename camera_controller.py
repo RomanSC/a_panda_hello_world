@@ -3,18 +3,29 @@
 """
 
 
-class Camera:
+class CameraController:
+    # def __init__(self, game):
+    #     self.game = game
+
+    #     self.game.camera.setPos(self.game.player.getX() + 10,
+    #                             self.game.player.getY() + 10,
+    #                             2)
+
+    #     self.game.camLens.setFov(120)
+
+    # def update(self, task):
+    #     self.game.camera.lookAt(self.game.player)
+
+    #     self.game.camera.setPos(self.game.player.getX() + 10,
+    #                             self.game.player.getY() + 10,
+    #                             2)
+
+    #     return task.cont
+
     def __init__(self, game):
         self.game = game
-        # TODO:
-        # https://www.panda3d.org/forums/viewtopic.php?t=1319
 
-        # Player/Camera Node Setup
-        # <self.game.render>
-        # |-<player>
-        #   |-<player_dummy_node>
-        #     |-<camera_dummy_node>
-        #       |-camera
+        self.game.disableMouse()
 
         self.start_pos = (0, -60, 50)
         self.start_hpr = (0, -30, 0)
@@ -26,6 +37,10 @@ class Camera:
 
         self.game.camera.reparentTo(self.node)
         self.node.reparentTo(self.game.player.node)
+
+        # TODO:
+        # Find out why self.game.camera has no camLens
+        # self.game.camera.camLens.setFov(120)
 
     def controller(self, task):
         # Zoom
@@ -39,3 +54,4 @@ class Camera:
         # self.game.keymap["zoom-out"] = False
 
         return task.cont
+

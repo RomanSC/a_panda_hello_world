@@ -16,9 +16,10 @@ from panda3d.core import DirectionalLight
 from pandac.PandaModules import WindowProperties
 
 from player import Player
-from camera import Camera
+from camera_controller import CameraController
 from keymap import Keymap
 from update import Update
+from lighting import Lighting
 
 import sys
 
@@ -63,10 +64,10 @@ class Alpha(ShowBase):
         self.init_sun()
         self.init_environment()
         self.window_properties()
-        self.mouse_and_cursor()
 
         self.player = Player(self)
-        self.camera = Camera(self)
+        self.camera_controller = CameraController(self)
+        # self.test_cam = TestNotCam(self)
         self.keymap = Keymap(self)
         self.update = Update(self)
         self.start_done = True
@@ -79,27 +80,6 @@ class Alpha(ShowBase):
         self.window_props.setFullscreen(False)
 
         self.win.requestProperties(self.window_props)
-
-    def mouse_and_cursor(self):
-        # Disable mouse camera control
-        self.disableMouse()
-
-        # self.props = WindowProperties()
-        # self.props.setCursorHidden(False)
-
-        # self.props = WindowProperties()
-        # self.win.requestProperties(self.props)
-
-    # TODO:
-    # Create GUI for editing camera position and snapping to follow the player
-    # def camera_text_task(self, task):
-    #     self.camera_info_text.destroy()
-    #     self.camera_info_text = OnscreenText(text="pos:{} hpr:{}".format(
-    #                             self.camera.getPos(),
-    #                             self.camera.getHpr()),
-    #                             pos=self.camera_text_pos)
-
-    #     return task.cont
 
     def init_sun(self):
         # print("DEBUG: Loading Sun ... ")

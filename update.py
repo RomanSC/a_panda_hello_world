@@ -20,5 +20,5 @@ class Update:
         self.game.taskMgr.add(self.game.player.gravity.update,
                               "player gravity")
 
-        self.game.taskMgr.add(self.game.camera.controller,
+        self.game.taskMgr.add(self.game.camera_controller.update,
                               "camera controller")
