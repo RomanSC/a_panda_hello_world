@@ -28,6 +28,7 @@ from panda3d.core import WindowProperties
 
 from loading_screen import LoadingScreen
 from player import Player
+from weapons import Sword
 from camera_controller import CameraController
 from keymap import Keymap
 from update import Update
@@ -62,6 +63,7 @@ class Game(ShowBase):
 
         self.lighting = Lighting(self)
         self.player = Player(self)
+        # self.sword = Sword(self)
         self.camera_controller = CameraController(self)
         self.keymap = Keymap(self)
         self.update = Update(self)

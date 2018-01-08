@@ -38,12 +38,12 @@ class Player(Actor):
         # Based on human average of 20"
         # TODO: Fine tune to be more
         # "athletic" and playable
-        self.jump_height = 0.508
+        self.jump_height = 0.508 * 20
 
         # self.animation_status["walk"] = None
 
         self.loadModel("assets/models/figures/man/man.egg")
-        self.loadAnims({"walk": "assets/models/figures/man/man_walk-walk.egg"})
+        self.loadAnims({"walk": "assets/models/figures/man/man-walk.egg"})
 
         self.player_material = Material()
         self.player_material.setShininess(0.0)
@@ -87,17 +87,17 @@ class Player(Actor):
 
         self.game.keymap.map["jump"] = False
 
-    def rotate(self, direction):
-        dt = globalClock.getDt()
+    # def rotate(self, direction):
+    #     dt = globalClock.getDt()
 
-        if direction == "left":
-            self.setH(self.getH() + ((1 * self.turn_speed) * dt))
-            # For move_left
-            # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
-        if direction == "right":
-            self.setH(self.getH() + -((1 * self.turn_speed) * dt))
-            # For move_right
-            # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
+    #     if direction == "left":
+    #         self.setH(self.getH() + ((1 * self.turn_speed) * dt))
+    #         # For move_left
+    #         # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
+    #     if direction == "right":
+    #         self.setH(self.getH() + -((1 * self.turn_speed) * dt))
+    #         # For move_right
+    #         # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
 
     # Movement etc...
     def controller(self, task):
@@ -126,14 +126,27 @@ class Player(Actor):
 
         # TODO:
         # self.setHpr(<based on mouse pointer position>)
+        # try:
+        #     self.look_at(mouse_pointer)
+        # except TypeError:
+        #     pass
         try:
-            self.look_at(mouse_pointer)
+            if (abs(self.getX() - mouse_pointer[0]) > 1) \
+              or (abs(self.getY() - mouse_pointer[1]) > 1) \
+              or (abs(self.getZ() - mouse_pointer[2]) > 1):
+                # self.setR(0)
+                self.look_at(mouse_pointer[0], mouse_pointer[1], 0)
+                # self.setR(0)
         except TypeError:
             pass
 
         # Jump
         if self.game.keymap.map["jump"]:
             self.jump()
+            # TODO:
+            # Figure out something less janky
+            self.setP(0)
+            self.setR(0)
 
         # Sprint
         if self.game.keymap.map["sprint"]:
