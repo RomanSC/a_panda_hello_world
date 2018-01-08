@@ -82,8 +82,7 @@ class Player(Actor):
     #         self.speed = self.speed_default
 
     def jump(self):
-        if self.getZ() <= self.gravity.gravity_floor:
-            self.setPos(self, (0, 0, (1 * self.jump_height)))
+        self.setPos(self, (0, 0, (1 * self.jump_height)))
 
         self.game.keymap.map["jump"] = False
 
@@ -130,13 +129,20 @@ class Player(Actor):
         #     self.look_at(mouse_pointer)
         # except TypeError:
         #     pass
+
         try:
-            if (abs(self.getX() - mouse_pointer[0]) > 1) \
-              or (abs(self.getY() - mouse_pointer[1]) > 1) \
-              or (abs(self.getZ() - mouse_pointer[2]) > 1):
-                # self.setR(0)
-                self.look_at(mouse_pointer[0], mouse_pointer[1], 0)
-                # self.setR(0)
+            # TODO:
+            # make this better, if you think about looking at
+            # x, y, self.scale/2 is still looking at angle,
+            # just less of an angle.
+
+            if (abs(self.getX() - mouse_pointer[0]) > 10) \
+              or (abs(self.getY() - mouse_pointer[1]) > 10) \
+              or (abs(self.getZ() - mouse_pointer[2]) > 10):
+                self.look_at(mouse_pointer[0],
+                             mouse_pointer[1],
+                             (self.getZ() + self.scale/2))
+
         except TypeError:
             pass
 

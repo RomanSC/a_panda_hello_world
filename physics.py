@@ -9,30 +9,23 @@ class Gravity:
         self.obj = obj
 
         # Limit to falling
-        self.gravity_floor = 0
+        self.ground = (self.game.ground_object.getZ() + 0.80)
         self.gravity_force = -9.81
-        self.velocity = 0
+
+        self.velocity_x = 0
+        self.velocity_y = 0
+        self.velocity_z = 0
 
     def update(self, task):
         dt = globalClock.getDt()
 
-        self.velocity += self.gravity_force * dt
+        if self.obj.getZ() >= self.ground:
+            self.obj.setZ(self.obj.getZ() + self.velocity_z * dt)
 
-        if self.obj.getZ() >= self.gravity_floor:
-            self.obj.setZ(self.obj.getZ() + self.velocity * dt)
-        # Gravity
-        # Pin to floor
-        # if self.obj.getZ() <= self.gravity_floor:
-        #     self.obj.setZ(self.gravity_floor)
+        if self.obj.getZ() <= self.ground:
+            self.obj.setZ(self.ground)
 
-        # elif self.obj.getZ() >= self.gravity_floor:
-        #     self.obj.setZ(self.obj.getZ() + ((1 * self.gravity_force) * dt))
-
-
-
-        # Add something to adjust gravity floor based
-        # on the actual floor (relative to the ground model)
-
+        self.velocity_z += self.gravity_force * dt
         return task.cont
 
 
