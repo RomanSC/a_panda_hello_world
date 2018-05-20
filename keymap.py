@@ -58,13 +58,14 @@ class Keymap:
         self.game.accept("arrow_down-up", self.setKey, ["backward", False])
         self.game.accept("arrow_right-up", self.setKey, ["right", False])
         self.game.accept("shift-up", self.setKey, ["sprint", False])
-        self.game.accept("space-up", self.setKey, ["jump", True])
+        self.game.accept("space", self.setKey, ["jump", True])
+        self.game.accept("space-up", self.setKey, ["jump", False])
 
         # Zoom
         self.game.accept("wheel_up-up", self.setKey, ["zoom-in", True])
         self.game.accept("wheel_down-up", self.setKey, ["zoom-out", True])
-        self.game.accept("wheel_up-up", self.setKey, ["zoom-in", False])
-        self.game.accept("wheel_down-up", self.setKey, ["zoom-out", False])
+        # self.game.accept("wheel_up-up", self.setKey, ["zoom-in", False])
+        # self.game.accept("wheel_down-up", self.setKey, ["zoom-out", False])
 
     def setKey(self, key, val):
         self.map[key] = val

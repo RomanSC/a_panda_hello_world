@@ -22,29 +22,40 @@ class CameraController:
 
         self.mouse_pointer = MousePointer(self.game)
 
-        self.min_zoom = 50
-        self.max_zoom = 200
-        self.zoom = ((self.min_zoom + self.max_zoom) / 2)
+        self.min_zoom = 100
+        self.max_zoom = 500
+
+        self.zoom = 200
 
     def update(self, task):
-        if self.zoom >= self.max_zoom:
+        print(self.zoom)
+        if self.zoom > self.max_zoom:
             self.zoom = self.max_zoom
+            return task.cont
 
-        elif self.zoom <= self.min_zoom:
+        if self.zoom < self.min_zoom:
             self.zoom = self.min_zoom
+            return task.cont
+
+        if self.game.keymap.map["zoom-out"] and not self.zoom == self.max_zoom:
+            self.zoom += 20
+            self.game.keymap.map["zoom-out"] = False
+        if self.game.keymap.map["zoom-in"] and not self.zoom == self.min_zoom:
+            self.zoom -= 20
+            self.game.keymap.map["zoom-in"] = False
 
         # Zoom
-        camera = self.game.camera
-        if self.game.keymap.map["zoom-in"]:
-            self.zoom += 1
-        if self.game.keymap.map["zoom-out"]:
-            self.zoom -= 1
+        # camera = self.game.camera
+        # if self.game.keymap.map["zoom-in"]:
+        #     self.zoom += 1
+        # if self.game.keymap.map["zoom-out"]:
+        #     self.zoom -= 1
 
         goto_pos = (self.game.player.getX(),
                     self.game.player.getY() + -(self.zoom),
                     self.game.player.getZ() + (self.zoom))
 
-        camera.setPos(*goto_pos)
+        self.game.camera.setPos(*goto_pos)
 
         return task.cont
 

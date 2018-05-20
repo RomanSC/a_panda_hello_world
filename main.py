@@ -7,8 +7,13 @@
     https://www.panda3d.org/manual/index.php/A_Panda3D_Hello_World_Tutorial
 
 """
+from config import *
+
 import os
 import sys
+
+# import panda from ./lib
+# sys.path.insert(0, "lib/")
 
 from direct.showbase.ShowBase import ShowBase
 
@@ -21,6 +26,8 @@ loadPrcFileData("", "sync-video false")
 loadPrcFileData("", "sync-video #t")
 loadPrcFileData("", "depth-bits 24")
 
+from panda3d.core import Vec3
+from panda3d.core import Point3
 from panda3d.core import Material
 from panda3d.core import DirectionalLight
 
@@ -29,12 +36,13 @@ from panda3d.core import WindowProperties
 from loading_screen import LoadingScreen
 from player import Player
 from weapons import Sword
+from weapons import HenryRifle
 from camera_controller import CameraController
 from keymap import Keymap
 from update import Update
 from lighting import Lighting
 from collision_controller import CollisionController
-
+from physics import Gravity
 
 class Game(ShowBase):
     def __init__(self):
@@ -46,9 +54,9 @@ class Game(ShowBase):
         self.start()
 
     def init_render_pipeline(self):
-        sys.path.insert(0, "./lib/RenderPipeline")
+        sys.path.insert(0, "lib/render_pipeline")
 
-        from lib.RenderPipeline.rpcore import RenderPipeline
+        from lib.render_pipeline.rpcore import RenderPipeline
 
         self.render_pipeline = RenderPipeline()
         self.render_pipeline.pre_showbase_init()
@@ -63,11 +71,13 @@ class Game(ShowBase):
 
         self.lighting = Lighting(self)
         self.player = Player(self)
-        # self.sword = Sword(self)
+        self.gravity = Gravity(self)
+        self.sword = Sword(self)
+        # self.henry_rifle = HenryRifle(self)
         self.camera_controller = CameraController(self)
+        self.collision_controller = CollisionController(self)
         self.keymap = Keymap(self)
         self.update = Update(self)
-        self.collision_controller = CollisionController
 
         self.start_done = True
 
@@ -75,35 +85,26 @@ class Game(ShowBase):
         self.window_props = WindowProperties()
         self.window_props.setCursorHidden(False)
 
-        self.window_props.setSize(1920, 1200)
-        self.window_props.setFullscreen(False)
+        self.window_props.setSize(*RESOLUTION)
+        self.window_props.setFullscreen(True)
 
         self.win.requestProperties(self.window_props)
 
     def init_environment(self):
-        # print("DEBUG: Loading evironment models ...")
-
         self.ground_object = self.loader.loadModel(
-                           "assets/models/environment/plane.egg")
+                           "assets/models/environment/terrain/land0.egg")
 
         self.ground_object.setScale(1, 1, 1)
         self.ground_object.setPos(0, 0, 0)
-        # self.ground.setHpr(0, 0, 0)
 
         self.ground_material = Material()
         self.ground_material.setShininess(0.0)
-        # self.ground_material.setAmbient((0.0, 0.0, 1.0, 1.0))
-        # print("DEBUG: in init_environment: if ground_material.hasAmbient() {}".format(self.ground_material.hasAmbient()))
-        # print("DEBUG: in init_environment: if ground_material.hasEmission() {}".format(self.ground_material.hasEmission()))
-
+        self.ground_material.setAmbient((0.0, 0.0, 1.0, 1.0))
         self.ground_material.setDiffuse((0.2, 0.7, 0.2, 1.0))
-
         self.ground_object.setMaterial(self.ground_material)
 
         # Always last
         self.ground_object.reparentTo(self.render)
-        # print("DEBUG: DONE!")
-
 
 def main():
     game = Game()

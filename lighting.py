@@ -21,7 +21,7 @@ class Lighting:
         # self.game.render.setLight(self.gamerender.attachNewNode(directionalLight))
         # sys.path.insert(0, "./lib/RenderPipeline")
 
-        # from lib.RenderPipeline import PointLight
-        # from lib.RenderPipeline import Spotlight
+        # from lib.render_pipeline import PointLight
+        # from lib.render_pipeline import Spotlight
 
 
