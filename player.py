@@ -20,6 +20,7 @@ class Player(Actor):
         self.start_hpr = (0.0, 0.0, 0.0)
 
         self.default_speed = 1.4 * 10
+        self.velocity = [0.0, 0.0, 0.0]
         self.speed = self.default_speed
         self.jump_height = 0.508 * 10
 
@@ -60,7 +61,7 @@ class Player(Actor):
 
         #
         if direction is "forward":
-            self.setPos(self, (0, ((1 * self.speed) * dt), 0))
+            # self.setPos(self, (0, ((1 * self.speed) * dt), 0))
             return
 
         #
@@ -71,7 +72,7 @@ class Player(Actor):
 
         #
         if direction is "backward":
-            self.setPos(self, (0, -((1 * self.speed) * dt), 0))
+            # self.setPos(self, (0, -((1 * self.speed) * dt), 0))
             return
 
         #
@@ -97,6 +98,15 @@ class Player(Actor):
 
     def end_jump(self):
         pass
+
+    def update(self, task):
+        dt = globalClock.getDt()
+
+        self.setX(self, self.velocity[0] * dt)
+        self.setY(self, self.velocity[1] * dt)
+        self.setZ(self, self.velocity[2] * dt)
+
+        return task.cont
 
     def controller(self, task):
         # Navigation keys

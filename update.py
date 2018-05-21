@@ -27,6 +27,9 @@ class Update:
         self.game.taskMgr.add(self.game.player.animate,
                               "player animations")
 
+        self.game.taskMgr.add(self.game.player.update,
+                              "player update")
+
         self.game.taskMgr.doMethodLater(0.1, self.game.collision_controller.update,
                                         "collision controller")
 
