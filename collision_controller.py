@@ -24,6 +24,8 @@ class CollisionController:
         self.traverser = CollisionTraverser('collision traverser')
         self.traverser.showCollisions(self.game.render)
 
+        # Attempt with CollisionHandlerFloor
+
         # self.traverser.addCollider(fromObject, handler)
         # self.player_ray = CollisionRay(*self.game.player.getPos(), 0.0, 0.0, -1.0)
 
@@ -35,6 +37,8 @@ class CollisionController:
 
         # self.game.player.node().setIntoCollideMask(BitMask32.bit(0))
         # self.game.ground_object.node().setIntoCollideMask(BitMask32.bit(0))
+
+        # Attempt with CollisionHandlerQueue() and CollisionRay()
 
         self.player_col_ray = CollisionRay()
         self.player_col_ray.setOrigin(*self.game.player.getPos())
@@ -49,7 +53,6 @@ class CollisionController:
         self.traverser.addCollider(self.player_col_node, self.ground_col_handler)
 
     def update(self, task):
-        # self.player_col_ray.setOrigin(*self.game.player.getPos())
 
         entries = list(self.ground_col_handler.getEntries())
         entries.sort(key=lambda x: x.getSurfacePoint(self.game.render).getZ())
