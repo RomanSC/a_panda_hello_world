@@ -24,6 +24,7 @@
 }
 
   <Group> mt-ruapehu-and-mt-ngauruhoe {
+    <Collide> { Polyset keep descend }
     <Transform> {
       <Matrix4> {
         9994.470703125 0.0 0.0 0.0 
