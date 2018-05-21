@@ -27,40 +27,40 @@ class CollisionController:
         # Attempt with CollisionHandlerFloor
 
         # self.traverser.addCollider(fromObject, handler)
-        # self.player_ray = CollisionRay(*self.game.player.getPos(), 0.0, 0.0, -1.0)
+        self.player_ray = CollisionRay(*self.game.player.getPos(), 0.0, 0.0, -1.0)
 
-        # self.player_from_object = self.game.player.attachNewNode(CollisionNode("player collision node"))
-        # self.player_from_object.node().addSolid(CollisionRay(0.0, 0.0, 1.0, 
-        #                                                      0.0, 0.0, -1.0))
-        # self.lifter = CollisionHandlerFloor()
-        # self.lifter.addCollider(self.player_from_object, self.game.player)
+        self.player_from_object = self.game.player.attachNewNode(CollisionNode("player collision node"))
+        self.player_from_object.node().addSolid(CollisionRay(0.0, 0.0, 1.0, 
+                                                             0.0, 0.0, -1.0))
+        self.lifter = CollisionHandlerFloor()
+        self.lifter.addCollider(self.player_from_object, self.game.player)
 
-        # self.game.player.node().setIntoCollideMask(BitMask32.bit(0))
-        # self.game.ground_object.node().setIntoCollideMask(BitMask32.bit(0))
+        self.game.player.node().setIntoCollideMask(BitMask32.bit(0))
+        self.game.ground_object.node().setIntoCollideMask(BitMask32.bit(0))
 
         # Attempt with CollisionHandlerQueue() and CollisionRay()
 
-        self.player_col_ray = CollisionRay()
-        self.player_col_ray.setOrigin(*self.game.player.getPos())
-        self.player_col_ray.setDirection(0.0, 0.0, -1.0)
-        self.player_gc = CollisionNode("player collision node")
-        self.player_gc.addSolid(self.player_col_ray)
-        self.player_gc.setFromCollideMask(CollideMask.bit(0))
-        self.player_gc.setIntoCollideMask(CollideMask.allOff())
-        self.player_col_node = self.game.player.attachNewNode(self.player_gc)
+        # self.player_col_ray = CollisionRay()
+        # self.player_col_ray.setOrigin(*self.game.player.getPos())
+        # self.player_col_ray.setDirection(0.0, 0.0, -1.0)
+        # self.player_gc = CollisionNode("player collision node")
+        # self.player_gc.addSolid(self.player_col_ray)
+        # self.player_gc.setFromCollideMask(CollideMask.bit(0))
+        # self.player_gc.setIntoCollideMask(CollideMask.allOff())
+        # self.player_col_node = self.game.player.attachNewNode(self.player_gc)
 
-        self.ground_col_handler = CollisionHandlerQueue()
-        self.traverser.addCollider(self.player_col_node, self.ground_col_handler)
+        # self.ground_col_handler = CollisionHandlerQueue()
+        # self.traverser.addCollider(self.player_col_node, self.ground_col_handler)
 
     def update(self, task):
 
-        entries = list(self.ground_col_handler.getEntries())
-        entries.sort(key=lambda x: x.getSurfacePoint(self.game.render).getZ())
+        # entries = list(self.ground_col_handler.getEntries())
+        # entries.sort(key=lambda x: x.getSurfacePoint(self.game.render).getZ())
 
-        print(entries)
+        # print(entries)
 
-        if len(entries) > 0:
-            print("asdfasdf")
-            self.game.player.setZ(entries[0].getSurfacePoint(self.game.render).getZ())
+        # if len(entries) > 0:
+        #     print("asdfasdf")
+        #     self.game.player.setZ(entries[0].getSurfacePoint(self.game.render).getZ())
 
         return task.cont
