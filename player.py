@@ -21,6 +21,8 @@ class Player(Actor):
 
         self.default_speed = 1.4 * 10
         self.velocity = [0.0, 0.0, 0.0]
+        self.max_velocity = 300.0
+        self.cx, self.cy, self.cz = 10, 10, 10
         self.speed = self.default_speed
         self.jump_height = 0.508 * 10
 
@@ -62,6 +64,7 @@ class Player(Actor):
         #
         if direction is "forward":
             # self.setPos(self, (0, ((1 * self.speed) * dt), 0))
+            self.velocity[1] += self.speed
             return
 
         #
@@ -73,6 +76,7 @@ class Player(Actor):
         #
         if direction is "backward":
             # self.setPos(self, (0, -((1 * self.speed) * dt), 0))
+            self.velocity[1] -= self.speed
             return
 
         #
@@ -105,6 +109,44 @@ class Player(Actor):
         self.setX(self, self.velocity[0] * dt)
         self.setY(self, self.velocity[1] * dt)
         self.setZ(self, self.velocity[2] * dt)
+
+        if self.velocity[0] > 0 and not self.velocity[0] == 0:
+            self.cx + 0.5
+            self.velocity[0] -= self.cx
+        elif self.velocity[0] == 0.0:
+            self.cx = 0
+
+        if self.velocity[1] > 0 and not self.velocity[1] == 0:
+            self.cy + 0.5
+            self.velocity[1] -= self.cy
+        elif self.velocity[1] == 0.0:
+            self.cy = 0
+
+        if self.velocity[2] > 0 and not self.velocity[2] == 0:
+            self.cz + 0.5
+            self.velocity[2] -= self.cz
+        elif self.velocity[2] == 0.0:
+            self.cz = 0
+
+        if abs(self.velocity[0]) > self.max_velocity:
+            if self.velocity[0] < 0:
+                self.velocity[0] = -abs(self.max_velocity)
+            else:
+                self.velocity[0] = self.max_velocity
+
+        if abs(self.velocity[1]) > self.max_velocity:
+            if self.velocity[1] < 0:
+                self.velocity[1] = -abs(self.max_velocity)
+            else:
+                self.velocity[1] = self.max_velocity
+
+        if abs(self.velocity[2]) > self.max_velocity:
+            if self.velocity[2] < 0:
+                self.velocity[2] = -abs(self.max_velocity)
+            else:
+                self.velocity[2] = self.max_velocity
+
+        print(self.velocity)
 
         return task.cont
 

@@ -64,7 +64,7 @@ class CollisionController:
 
         if not self.game.keymap.map["jump"]:
             if len(entries) > 0:
-                print(entries)
+                # print(entries)
                 self.game.player.setZ(entries[0].getSurfacePoint(self.game.render).getZ())
 
         return task.cont
