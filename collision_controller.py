@@ -41,7 +41,10 @@ class CollisionController:
         # Attempt with CollisionHandlerQueue() and CollisionRay()
 
         self.player_col_ray = CollisionRay()
-        self.player_col_ray.setOrigin(*self.game.player.getPos())
+        pos = list(self.game.player.getPos())
+        pos[2] = pos[2] + 16.0
+        pos = tuple(pos)
+        self.player_col_ray.setOrigin(*pos)
         self.player_col_ray.setDirection(0.0, 0.0, -1.0)
         self.player_gc = CollisionNode("player collision node")
         self.player_gc.addSolid(self.player_col_ray)
@@ -53,14 +56,15 @@ class CollisionController:
         self.traverser.addCollider(self.player_col_node, self.ground_col_handler)
 
     def update(self, task):
+        self.traverser.traverse(self.game.render)
+        self.player_col_node.show()
 
         entries = list(self.ground_col_handler.getEntries())
         entries.sort(key=lambda x: x.getSurfacePoint(self.game.render).getZ())
 
-        print(entries)
-
-        if len(entries) > 0:
-            print("asdfasdf")
-            self.game.player.setZ(entries[0].getSurfacePoint(self.game.render).getZ())
+        if not self.game.keymap.map["jump"]:
+            if len(entries) > 0:
+                print(entries)
+                self.game.player.setZ(entries[0].getSurfacePoint(self.game.render).getZ())
 
         return task.cont

@@ -92,7 +92,7 @@ class Game(ShowBase):
 
     def init_environment(self):
         self.ground_object = self.loader.loadModel(
-                           "assets/models/environment/terrain/land0.egg")
+                           "assets/models/environment/terrain/land1.egg")
 
         self.ground_object.setScale(1, 1, 1)
         self.ground_object.setPos(0, 0, 0)

@@ -28,7 +28,6 @@ class CameraController:
         self.zoom = 200
 
     def update(self, task):
-        print(self.zoom)
         if self.zoom > self.max_zoom:
             self.zoom = self.max_zoom
             return task.cont

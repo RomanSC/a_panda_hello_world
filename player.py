@@ -16,9 +16,7 @@ class Player(Actor):
 
         self.scale = 1
 
-        # pos = self.game.ground_object.getPos()
-        #self.start_pos = (pos[0]+1, pos[1]+1, pos[2]+1)
-        self.start_pos = (340.336, 197.549, 4.47032)
+        self.start_pos = (0.0, 0.0, 0.0)
         self.start_hpr = (0.0, 0.0, 0.0)
 
         self.default_speed = 1.4 * 10
@@ -35,8 +33,8 @@ class Player(Actor):
         self.is_jumping = False
 
         self.player_material = Material()
-        self.player_material.setShininess(0.0)
-        self.player_material.setDiffuse((0.8, 0, 0, 1.0))
+        self.player_material.setShininess(1.0)
+        self.player_material.setDiffuse((1.8, 1.2, 1.2, 1.0))
         self.setMaterial(self.player_material)
 
         self.reparentTo(self.game.render)
@@ -44,16 +42,6 @@ class Player(Actor):
 
         self.setPos(*self.start_pos)
         self.setHpr(*self.start_hpr)
-
-        self.v = (0.0, 0.0, 0.0)
-        self.g = (0.0, 0.0, GRAVITY)
-
-        # Node for the player
-        # self.node = self.game.render.attachNewNode("player node")
-        # self.node.reparentTo(self)
-
-        self.location = Location(self.game, self)
-        # self.gravity = Gravity(self.game, self)
 
         self.loop("idle", fromFrame=0, toFrame=49)
         self.queued_animation = "idle"
@@ -77,7 +65,8 @@ class Player(Actor):
 
         #
         if direction is "left":
-            self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
+            # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
+            self.setHpr(self, (((1 * self.speed) * 8 * dt), 0 ,0))
             return
 
         #
@@ -87,20 +76,24 @@ class Player(Actor):
 
         #
         if direction is "right":
-            self.setPos(self, (((1 * self.speed) * dt), 0, 0))
+            # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
+            self.setHpr(self, (-((1 * self.speed) * 8 * dt), 0, 0))
             return
 
     # def jump(self):
     #     pass
     #     dt = globalClock.getDt()
 
-    #     print("JUMP!JUMP!JUMP!JUMP!JUMP!JUMP!JUMP!JUMP!JUMP!JUMP!JUMP!JUMP!JUMP!")
     #     # self.v(self.v[0], self.v[1], (self.v[2] + (self.jump_height * 80)))
     #     pos = self.getPos()
     #     self.setPos(self, (pos[0], pos[1], self.jump_height))
 
     def start_jump(self):
-        pass
+        dt = globalClock.getDt()
+        # Queue up task to wait until player hits floor
+        # run end_jump() at the end of the task
+        print("jump")
+        self.setPos(self, (0, 0, ((20 * self.jump_height) * dt)))
 
     def end_jump(self):
         pass
@@ -120,20 +113,23 @@ class Player(Actor):
             self.movement("right")
 
         if self.game.keymap.map["jump"]:
-            pass
-            # self.jump()
+            self.start_jump()
 
         # Player rotation to face mouse cursor
         # At game start, mouse_pointer is None
         mouse_pointer = self.game.camera_controller.mouse_pointer.pos
+        # if mouse_pointer:
 
-        if mouse_pointer:
-            if (abs(self.getX() - mouse_pointer[0]) > 10) \
-              or (abs(self.getY() - mouse_pointer[1]) > 10) \
-              or (abs(self.getZ() - mouse_pointer[2]) > 10):
-                self.look_at(mouse_pointer[0],
-                             mouse_pointer[1],
-                             (self.getZ() + self.scale/2))
+            # if (abs(self.getX() - mouse_pointer[0]) > 10) \
+            #   or (abs(self.getY() - mouse_pointer[1]) > 10) \
+            #   or (abs(self.getZ() - mouse_pointer[2]) > 10):
+            #     self.look_at(mouse_pointer[0],
+            #                  mouse_pointer[1],
+            #                  (self.getZ() + self.scale/2))
+
+            # self.look_at(mouse_pointer[0],
+            #              mouse_pointer[1],
+            #              (self.getZ() + self.scale/2))
 
         return task.cont
 
