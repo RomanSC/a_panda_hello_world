@@ -86,7 +86,7 @@ class Game(ShowBase):
         self.window_props.setCursorHidden(False)
 
         self.window_props.setSize(*RESOLUTION)
-        self.window_props.setFullscreen(True)
+        self.window_props.setFullscreen(FULLSCREEN)
 
         self.win.requestProperties(self.window_props)
 
