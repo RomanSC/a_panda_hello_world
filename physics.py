@@ -18,5 +18,6 @@ class Gravity:
         dt = globalClock.getDt()
 
         # self.game.player.setPos(self.game.player, times_tup(GRAVITY, dt))
+        # self.game.player.setPos(self, *self.velocity)
 
         return task.cont

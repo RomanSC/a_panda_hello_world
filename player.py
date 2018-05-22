@@ -9,6 +9,8 @@ from panda3d.core import Material
 from location import Location
 from physics import Gravity
 
+from math import sqrt
+
 class Player(Actor):
     def __init__(self, game):
         super().__init__(self)
@@ -19,12 +21,12 @@ class Player(Actor):
         self.start_pos = (0.0, 0.0, 0.0)
         self.start_hpr = (0.0, 0.0, 0.0)
 
-        self.default_speed = 1.4 * 10
+        self.default_speed = 4.0
         self.velocity = [0.0, 0.0, 0.0]
-        self.max_velocity = 300.0
+        self.max_velocity = 100.0
         self.cx, self.cy, self.cz = 10, 10, 10
         self.speed = self.default_speed
-        self.jump_height = 0.508 * 10
+        self.jump_height = 8.0
 
         self.loadModel("assets/models/figures/man/man.egg")
         self.loadAnims({"walk": "assets/models/figures/man/man-walk.egg",
@@ -55,7 +57,7 @@ class Player(Actor):
 
         # Sprinting
         if self.game.keymap.map["sprint"]:
-            self.speed = 2.68224 * 20
+            self.speed = self.default_speed * 1.5
             self.queued_animation = "run"
         else:
             self.speed = self.default_speed
@@ -69,8 +71,8 @@ class Player(Actor):
 
         #
         if direction is "left":
-            # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
-            self.setHpr(self, (((1 * self.speed) * 8 * dt), 0 ,0))
+            self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
+            # self.setHpr(self, (((1 * self.speed) * 10 * dt), 0 ,0))
             return
 
         #
@@ -81,8 +83,8 @@ class Player(Actor):
 
         #
         if direction is "right":
-            # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
-            self.setHpr(self, (-((1 * self.speed) * 8 * dt), 0, 0))
+            self.setPos(self, (((1 * self.speed) * dt), 0, 0))
+            # self.setHpr(self, (-((1 * self.speed) * 10 * dt), 0, 0))
             return
 
     # def jump(self):
@@ -95,10 +97,8 @@ class Player(Actor):
 
     def start_jump(self):
         dt = globalClock.getDt()
-        # Queue up task to wait until player hits floor
-        # run end_jump() at the end of the task
-        print("jump")
-        self.setPos(self, (0, 0, ((20 * self.jump_height) * dt)))
+
+        self.velocity[2] += self.jump_height
 
     def end_jump(self):
         pass
@@ -110,41 +110,31 @@ class Player(Actor):
         self.setY(self, self.velocity[1] * dt)
         self.setZ(self, self.velocity[2] * dt)
 
-        if self.velocity[0] > 0 and not self.velocity[0] == 0:
-            self.cx + 0.5
-            self.velocity[0] -= self.cx
-        elif self.velocity[0] == 0.0:
-            self.cx = 0
+        if self.velocity[0] != 0:
+            if self.velocity[0] > 0:
+                self.velocity[0] -= self.speed / 2
 
-        if self.velocity[1] > 0 and not self.velocity[1] == 0:
-            self.cy + 0.5
-            self.velocity[1] -= self.cy
-        elif self.velocity[1] == 0.0:
-            self.cy = 0
-
-        if self.velocity[2] > 0 and not self.velocity[2] == 0:
-            self.cz + 0.5
-            self.velocity[2] -= self.cz
-        elif self.velocity[2] == 0.0:
-            self.cz = 0
-
-        if abs(self.velocity[0]) > self.max_velocity:
             if self.velocity[0] < 0:
-                self.velocity[0] = -abs(self.max_velocity)
-            else:
-                self.velocity[0] = self.max_velocity
+                self.velocity[0] += self.speed / 2
 
-        if abs(self.velocity[1]) > self.max_velocity:
+        if self.velocity[1] != 0:
+            if self.velocity[1] > 0:
+                self.velocity[1] -= self.speed / 2
+
             if self.velocity[1] < 0:
-                self.velocity[1] = -abs(self.max_velocity)
-            else:
-                self.velocity[1] = self.max_velocity
+                self.velocity[1] += self.speed / 2
 
-        if abs(self.velocity[2]) > self.max_velocity:
-            if self.velocity[2] < 0:
-                self.velocity[2] = -abs(self.max_velocity)
-            else:
-                self.velocity[2] = self.max_velocity
+        # if self.velocity[2] != 0.0:
+        #     if self.velocity[2] > 0:
+        #         self.velocity[2] -= self.speed / 2
+
+        #     if self.velocity[2] < 0:
+        #         self.velocity[2] += self.jump_height / 2
+
+
+        for x in range(len(self.velocity)):
+            if self.velocity[x] > self.max_velocity:
+                self.velocity[x] = self.max_velocity
 
         print(self.velocity)
 
@@ -170,7 +160,7 @@ class Player(Actor):
         # Player rotation to face mouse cursor
         # At game start, mouse_pointer is None
         mouse_pointer = self.game.camera_controller.mouse_pointer.pos
-        # if mouse_pointer:
+        if mouse_pointer:
 
             # if (abs(self.getX() - mouse_pointer[0]) > 10) \
             #   or (abs(self.getY() - mouse_pointer[1]) > 10) \
@@ -179,9 +169,16 @@ class Player(Actor):
             #                  mouse_pointer[1],
             #                  (self.getZ() + self.scale/2))
 
+            self.look_at(mouse_pointer[0],
+                         mouse_pointer[1],
+                         (self.getZ() + self.scale/2))
+
             # self.look_at(mouse_pointer[0],
             #              mouse_pointer[1],
-            #              (self.getZ() + self.scale/2))
+            #              mouse_pointer[2])
+
+            print(self.getHpr())
+            print(mouse_pointer)
 
         return task.cont
 

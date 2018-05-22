@@ -8,6 +8,10 @@ from direct.showbase.ShowBase import Point3
 from direct.showbase.ShowBase import CardMaker
 from direct.showbase.ShowBase import CardMaker
 
+import direct.directbase.DirectStart 
+from direct.showbase.DirectObject import DirectObject 
+# from pandac.PandaModules import * 
+
 
 class CameraController:
     def __init__(self, game):
@@ -58,32 +62,37 @@ class CameraController:
 
         return task.cont
 
+# class MousePointer:
+#     def __init__(self, game):
+#         self.game = game
+#         z = 0
+#         self.plane = Plane(Vec3(0, 0, 1), Point3(0, 0, z))
+#         cm = CardMaker("blah")
+#         cm.setFrame(-100, 100, -100, 100)
+
+#         self.game.render.attachNewNode(cm.generate()).lookAt(0, 0, -1)
+
+#         self.pos = None
+
+#     def get_point(self, task):
+#         if self.game.mouseWatcherNode.hasMouse():
+#             mpos = self.game.mouseWatcherNode.getMouse()
+#             pos_3d = Point3()
+#             nearPoint = Point3()
+#             farPoint = Point3()
+
+#             self.game.camLens.extrude(mpos, nearPoint, farPoint)
+
+#             if self.plane.intersectsLine(pos_3d,
+#                self.game.render.getRelativePoint(self.game.camera, nearPoint),
+#                self.game.render.getRelativePoint(self.game.camera, farPoint)):
+#                 # print "Mouse ray intersects ground plane at ", pos_3d
+#                 # self.model.setPos(render, pos_3d)
+#                 self.pos = pos_3d
+#         return task.again
 
 class MousePointer:
     def __init__(self, game):
         self.game = game
-        z = 0
-        self.plane = Plane(Vec3(0, 0, 1), Point3(0, 0, z))
-        cm = CardMaker("blah")
-        cm.setFrame(-100, 100, -100, 100)
 
-        self.game.render.attachNewNode(cm.generate()).lookAt(0, 0, -1)
 
-        self.pos = None
-
-    def get_point(self, task):
-        if self.game.mouseWatcherNode.hasMouse():
-            mpos = self.game.mouseWatcherNode.getMouse()
-            pos_3d = Point3()
-            nearPoint = Point3()
-            farPoint = Point3()
-
-            self.game.camLens.extrude(mpos, nearPoint, farPoint)
-
-            if self.plane.intersectsLine(pos_3d,
-               self.game.render.getRelativePoint(self.game.camera, nearPoint),
-               self.game.render.getRelativePoint(self.game.camera, farPoint)):
-                # print "Mouse ray intersects ground plane at ", pos_3d
-                # self.model.setPos(render, pos_3d)
-                self.pos = pos_3d
-        return task.again

@@ -62,9 +62,12 @@ class CollisionController:
         entries = list(self.ground_col_handler.getEntries())
         entries.sort(key=lambda x: x.getSurfacePoint(self.game.render).getZ())
 
-        if not self.game.keymap.map["jump"]:
-            if len(entries) > 0:
-                # print(entries)
-                self.game.player.setZ(entries[0].getSurfacePoint(self.game.render).getZ())
+        if len(entries) > 0:
+            self.game.player.setZ(entries[0].getSurfacePoint(self.game.render).getZ())
+            # if self.game.player.getZ() < entries[0].getSurfacePoint(self.game.render).getZ():
+            #     self.game.player.setZ(entries[0].getSurfacePoint(self.game.render).getZ())
+
+            # if self.game.player.getZ() > entries[0].getSurfacePoint(self.game.render).getZ():
+            #     self.game.player.velocity[2] -= self.game.player.jump_height / 4
 
         return task.cont
