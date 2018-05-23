@@ -1,15 +1,14 @@
 #!/usr/bin/Python3
 """ camera.py | Wed, Jan 03, 2018 | Roman S. Collins
 """
-from direct.showbase.ShowBase import Plane
-from direct.showbase.ShowBase import ShowBase
-from direct.showbase.ShowBase import Vec3
-from direct.showbase.ShowBase import Point3
-from direct.showbase.ShowBase import CardMaker
-from direct.showbase.ShowBase import CardMaker
+from panda3d.core import Plane
+from panda3d.core import Vec3
+from panda3d.core import Point3
+from panda3d.core import CardMaker
+from panda3d.core import CardMaker
 
-import direct.directbase.DirectStart 
-from direct.showbase.DirectObject import DirectObject 
+# import direct.directbase.DirectStart 
+# from direct.showbase.DirectObject import DirectObject 
 # from pandac.PandaModules import * 
 
 
@@ -24,7 +23,7 @@ class CameraController:
         self.game.camera.setPos(*self.start_pos)
         self.game.camera.setHpr(*self.start_hpr)
 
-        self.mouse_pointer = MousePointer(self.game)
+        # self.mouse_pointer = MousePointer(self.game)
 
         self.min_zoom = 100
         self.max_zoom = 500
@@ -91,8 +90,6 @@ class CameraController:
 #                 self.pos = pos_3d
 #         return task.again
 
-class MousePointer:
-    def __init__(self, game):
-        self.game = game
-
-
+# class MousePointer:
+#     def __init__(self, game):
+#         self.game = game

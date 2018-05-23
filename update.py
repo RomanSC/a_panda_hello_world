@@ -6,17 +6,14 @@
     initializing all class update methods within the game.
 
 """
-# from direct.task import taskMgr
-# from direct.task import Task
-
 
 class Update:
     def __init__(self, game):
         self.game = game
 
         # Order matters
-        self.game.taskMgr.add(self.game.camera_controller.mouse_pointer.get_point,
-                              "get 3d mouse position")
+        # self.game.taskMgr.add(self.game.camera_controller.mouse_pointer.get_point,
+        #                       "get 3d mouse position")
 
         self.game.taskMgr.add(self.game.player.controller,
                               "player controller")

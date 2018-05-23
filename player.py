@@ -9,8 +9,6 @@ from panda3d.core import Material
 from location import Location
 from physics import Gravity
 
-from math import sqrt
-
 class Player(Actor):
     def __init__(self, game):
         super().__init__(self)
@@ -38,11 +36,22 @@ class Player(Actor):
         self.is_jumping = False
 
         self.player_material = Material()
-        self.player_material.setShininess(1.0)
-        self.player_material.setDiffuse((1.8, 1.2, 1.2, 1.0))
+        # self.player_material.setShininess(1.0)
+        # self.player_material.setDiffuse((1.8, 1.2, 1.2, 1.0))
         self.setMaterial(self.player_material)
 
         self.reparentTo(self.game.render)
+        # self.loadTexture("assets/blender/man/textures/man_body/young_lightskinned_male_diffuse2.png")
+        # self.setColor(0.0, 0.0, 0.0, 1.0)
+
+        # self.clearColor()
+        # self.clearColorScale()
+
+        self.material = Material()
+        self.material.setShininess(10)
+        self.material.setDiffuse((1, 0, 0, 1.0))
+        self.setMaterial(self.material)
+
         self.setScale(self.scale)
 
         self.setPos(*self.start_pos)
@@ -71,8 +80,8 @@ class Player(Actor):
 
         #
         if direction is "left":
-            self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
-            # self.setHpr(self, (((1 * self.speed) * 10 * dt), 0 ,0))
+            # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
+            self.setHpr(self, (((1 * self.speed) * 10 * dt), 0 ,0))
             return
 
         #
@@ -83,8 +92,8 @@ class Player(Actor):
 
         #
         if direction is "right":
-            self.setPos(self, (((1 * self.speed) * dt), 0, 0))
-            # self.setHpr(self, (-((1 * self.speed) * 10 * dt), 0, 0))
+            # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
+            self.setHpr(self, (-((1 * self.speed) * 10 * dt), 0, 0))
             return
 
     # def jump(self):
@@ -96,9 +105,10 @@ class Player(Actor):
     #     self.setPos(self, (pos[0], pos[1], self.jump_height))
 
     def start_jump(self):
+        self.is_jumping = True
         dt = globalClock.getDt()
 
-        self.velocity[2] += self.jump_height
+
 
     def end_jump(self):
         pass
@@ -108,33 +118,30 @@ class Player(Actor):
 
         self.setX(self, self.velocity[0] * dt)
         self.setY(self, self.velocity[1] * dt)
+
+        # Gravity set in physics.py
         self.setZ(self, self.velocity[2] * dt)
 
-        if self.velocity[0] != 0:
-            if self.velocity[0] > 0:
-                self.velocity[0] -= self.speed / 2
-
-            if self.velocity[0] < 0:
-                self.velocity[0] += self.speed / 2
-
-        if self.velocity[1] != 0:
-            if self.velocity[1] > 0:
-                self.velocity[1] -= self.speed / 2
-
-            if self.velocity[1] < 0:
-                self.velocity[1] += self.speed / 2
-
-        # if self.velocity[2] != 0.0:
-        #     if self.velocity[2] > 0:
-        #         self.velocity[2] -= self.speed / 2
-
-        #     if self.velocity[2] < 0:
-        #         self.velocity[2] += self.jump_height / 2
-
-
         for x in range(len(self.velocity)):
-            if self.velocity[x] > self.max_velocity:
-                self.velocity[x] = self.max_velocity
+            # Check velocity
+            if abs(self.velocity[x]) > self.max_velocity:
+                if self.velocity[x] < 0:
+                    self.velocity[x] = -self.max_velocity
+                if self.velocity[x] > 0:
+                    self.velocity[x] = self.max_velocity
+
+            # Reduce velocity
+            if self.velocity[x] != 0:
+                if x != 2:
+                    if self.velocity[x] < 0:
+                        self.velocity[x] += self.speed / 1.8
+                    if self.velocity[x] > 0:
+                        self.velocity[x] -=  self.speed / 1.8
+                else:
+                    if self.velocity[x] < 0:
+                        self.velocity[x] += self.jump_height / 1.8
+                    if self.velocity[x] > 0:
+                        self.velocity[x] -= self.jump_height / 1.8
 
         print(self.velocity)
 
@@ -159,26 +166,26 @@ class Player(Actor):
 
         # Player rotation to face mouse cursor
         # At game start, mouse_pointer is None
-        mouse_pointer = self.game.camera_controller.mouse_pointer.pos
-        if mouse_pointer:
+        # mouse_pointer = self.game.camera_controller.mouse_pointer.pos
+        # if mouse_pointer:
 
-            # if (abs(self.getX() - mouse_pointer[0]) > 10) \
-            #   or (abs(self.getY() - mouse_pointer[1]) > 10) \
-            #   or (abs(self.getZ() - mouse_pointer[2]) > 10):
-            #     self.look_at(mouse_pointer[0],
-            #                  mouse_pointer[1],
-            #                  (self.getZ() + self.scale/2))
+        #     # if (abs(self.getX() - mouse_pointer[0]) > 10) \
+        #     #   or (abs(self.getY() - mouse_pointer[1]) > 10) \
+        #     #   or (abs(self.getZ() - mouse_pointer[2]) > 10):
+        #     #     self.look_at(mouse_pointer[0],
+        #     #                  mouse_pointer[1],
+        #     #                  (self.getZ() + self.scale/2))
 
-            self.look_at(mouse_pointer[0],
-                         mouse_pointer[1],
-                         (self.getZ() + self.scale/2))
+        #     self.look_at(mouse_pointer[0],
+        #                  mouse_pointer[1],
+        #                  (self.getZ() + self.scale/2))
 
-            # self.look_at(mouse_pointer[0],
-            #              mouse_pointer[1],
-            #              mouse_pointer[2])
+        #     # self.look_at(mouse_pointer[0],
+        #     #              mouse_pointer[1],
+        #     #              mouse_pointer[2])
 
             print(self.getHpr())
-            print(mouse_pointer)
+            # print(mouse_pointer)
 
         return task.cont
 

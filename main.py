@@ -11,11 +11,7 @@ from config import *
 from helpers import *
 import os
 import sys
-# import panda from ./lib
-# sys.path.insert(0, "lib/")
 from direct.showbase.ShowBase import ShowBase
-# CD to current dir
-# os.chdir(os.path.realpath(os.path.dirname(__file__)))
 from panda3d.core import loadPrcFileData
 from panda3d.core import loadPrcFileData
 loadPrcFileData("", "sync-video false")
@@ -44,17 +40,17 @@ class Game(ShowBase):
 
         self.messenger.toggleVerbose()
 
-        # self.init_render_pipeline()
+        self.init_render_pipeline()
         self.start()
 
-    # def init_render_pipeline(self):
-    #     sys.path.insert(0, "lib/render_pipeline")
+    def init_render_pipeline(self):
+        sys.path.insert(0, "lib/render_pipeline")
 
-    #     from lib.render_pipeline.rpcore import RenderPipeline
+        from lib.render_pipeline.rpcore import RenderPipeline
 
-    #     self.render_pipeline = RenderPipeline()
-    #     self.render_pipeline.pre_showbase_init()
-    #     self.render_pipeline.create(self)
+        self.render_pipeline = RenderPipeline()
+        self.render_pipeline.pre_showbase_init()
+        self.render_pipeline.create(self)
 
     def start(self):
         self.start_done = False
@@ -99,6 +95,7 @@ class Game(ShowBase):
 
         # Always last
         self.ground_object.reparentTo(self.render)
+        self.ground_object.setColor(0.0, 1.0, 0.0)
 
 
 def main():

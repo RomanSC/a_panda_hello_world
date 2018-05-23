@@ -17,10 +17,10 @@ class Sword(Actor):
 
         self.loadModel("assets/models/weapons/melee/swords/sword.egg")
 
-        self.sword_material = Material()
-        self.sword_material.setShininess(10)
-        self.sword_material.setDiffuse((1, 0, 0, 1.0))
-        self.setMaterial(self.sword_material)
+        # self.sword_material = Material()
+        # self.sword_material.setShininess(10)
+        # self.sword_material.setDiffuse((1, 0, 0, 1.0))
+        # self.setMaterial(self.sword_material)
 
         self.reparentTo(self.game.render)
 

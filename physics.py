@@ -11,13 +11,10 @@ class Gravity:
         self.game = game
         self.player = self.game.player
 
-        # self.player.v = (0.0, 0.0, 0.0)
-        # self.player.g = (0.0, 0.0, float(self.g))
-
     def update(self, task):
         dt = globalClock.getDt()
 
-        # self.game.player.setPos(self.game.player, times_tup(GRAVITY, dt))
-        # self.game.player.setPos(self, *self.velocity)
+        if self.game.player.getZ() > self.game.player.scale:
+            self.game.player.velocity[2] -= abs(GRAVITY)
 
         return task.cont
