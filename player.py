@@ -2,10 +2,9 @@
 """ player.py | Tue, Jan 02, 2018 | Roman S. Collins
 """
 from config import *
-
+from numpy import arange
 from direct.actor.Actor import Actor
 from panda3d.core import Material
-
 from location import Location
 from physics import Gravity
 
@@ -22,7 +21,6 @@ class Player(Actor):
         self.default_speed = 4.0
         self.velocity = [0.0, 0.0, 0.0]
         self.max_velocity = 100.0
-        self.cx, self.cy, self.cz = 10, 10, 10
         self.speed = self.default_speed
         self.jump_height = 8.0
 
@@ -35,23 +33,11 @@ class Player(Actor):
         self.queued_animation = None
         self.is_jumping = False
 
-        self.player_material = Material()
-        # self.player_material.setShininess(1.0)
-        # self.player_material.setDiffuse((1.8, 1.2, 1.2, 1.0))
-        self.setMaterial(self.player_material)
-
         self.reparentTo(self.game.render)
-        # self.loadTexture("assets/blender/man/textures/man_body/young_lightskinned_male_diffuse2.png")
-        # self.setColor(0.0, 0.0, 0.0, 1.0)
-
-        # self.clearColor()
-        # self.clearColorScale()
-
         self.material = Material()
-        self.material.setShininess(10)
-        self.material.setDiffuse((1, 0, 0, 1.0))
         self.setMaterial(self.material)
 
+        self.setColor((1, 0, 0, 1), 1)
         self.setScale(self.scale)
 
         self.setPos(*self.start_pos)
@@ -131,17 +117,35 @@ class Player(Actor):
                     self.velocity[x] = self.max_velocity
 
             # Reduce velocity
+            # if self.velocity[x] != 0:
+            #     if x != 2:
+            #         if self.velocity[x] < 0:
+            #             self.velocity[x] += self.speed / 1.8
+            #         if self.velocity[x] > 0:
+            #             self.velocity[x] -=  self.speed / 1.8
+            #     else:
+            #         if self.velocity[x] < 0:
+            #             self.velocity[x] += self.jump_height / 1.8
+            #         if self.velocity[x] > 0:
+            #             self.velocity[x] -= self.jump_height / 1.8
+
+            # Reduce velocity[x] by the values highest evenly divisible number,
+            # so that velocity[x] always returns to 0
             if self.velocity[x] != 0:
                 if x != 2:
                     if self.velocity[x] < 0:
-                        self.velocity[x] += self.speed / 1.8
+                        self.velocity[x] += 0.01
+
                     if self.velocity[x] > 0:
-                        self.velocity[x] -=  self.speed / 1.8
+                        self.velocity[x] -= 0.01
                 else:
                     if self.velocity[x] < 0:
-                        self.velocity[x] += self.jump_height / 1.8
+                        self.velocity[x] -= 0.01
+
                     if self.velocity[x] > 0:
-                        self.velocity[x] -= self.jump_height / 1.8
+                        self.velocity[x] -= 0.01
+
+            self.velocity[x] = round(self.velocity[x], 2)
 
         print(self.velocity)
 

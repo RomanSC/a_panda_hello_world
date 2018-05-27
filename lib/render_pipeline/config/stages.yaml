@@ -56,7 +56,7 @@ global_stage_order:
   - SMAAStage
   - FXAAStage
   - DoFStage
-  - MotionBlurStage
+  # - MotionBlurStage
   - SkinShadingStage
   - SharpenStage
   - ColorCorrectionStage

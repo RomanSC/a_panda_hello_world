@@ -22,7 +22,7 @@ class CollisionController:
         self.game = game
 
         self.traverser = CollisionTraverser('collision traverser')
-        self.traverser.showCollisions(self.game.render)
+        # self.traverser.showCollisions(self.game.render)
 
         # Attempt with CollisionHandlerFloor
 
@@ -57,7 +57,7 @@ class CollisionController:
 
     def update(self, task):
         self.traverser.traverse(self.game.render)
-        self.player_col_node.show()
+        # self.player_col_node.show()
 
         entries = list(self.ground_col_handler.getEntries())
         entries.sort(key=lambda x: x.getSurfacePoint(self.game.render).getZ())
