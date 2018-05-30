@@ -36,7 +36,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/roman/code/games/panda3d/a-panda-hello-world/env"
+set -gx VIRTUAL_ENV "/home/roman/code/games/panda3d/a_panda_hello_world/env"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

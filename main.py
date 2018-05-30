@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+ #!/usr/bin/python3
 """ a_panda_hello_world.py | Roman S. Collins | Mon, Dec 18, 2017
 
     Following along to "A Panda3D Hello World Tutorial" from the Panda3D
@@ -8,7 +8,9 @@
 
 """
 from config import *
+from constants import *
 from helpers import *
+
 import os
 import sys
 from direct.showbase.ShowBase import ShowBase
@@ -40,7 +42,7 @@ class Game(ShowBase):
 
         self.messenger.toggleVerbose()
 
-        self.init_render_pipeline()
+        # self.init_render_pipeline()
         self.start()
 
     def init_render_pipeline(self):

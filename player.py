@@ -2,6 +2,9 @@
 """ player.py | Tue, Jan 02, 2018 | Roman S. Collins
 """
 from config import *
+from constants import *
+from helpers import *
+
 from numpy import arange
 from direct.actor.Actor import Actor
 from panda3d.core import Material
@@ -18,11 +21,17 @@ class Player(Actor):
         self.start_pos = (0.0, 0.0, 0.0)
         self.start_hpr = (0.0, 0.0, 0.0)
 
-        self.default_speed = 4.0
-        self.velocity = [0.0, 0.0, 0.0]
-        self.max_velocity = 100.0
+        self.default_speed = 5.0
         self.speed = self.default_speed
+        self.sprint_speed = 11.0
         self.jump_height = 8.0
+
+        # TODO:
+        # Check variable names for clarity via research
+        self.max_velocity = 14.0
+        self.velocity = [0.0, 0.0, 0.0]
+        self.acceleration = [self.speed, self.speed, self.speed]
+        self.friction = [2.0, 2.0, 2.0]
 
         self.loadModel("assets/models/figures/man/man.egg")
         self.loadAnims({"walk": "assets/models/figures/man/man-walk.egg",
@@ -52,7 +61,7 @@ class Player(Actor):
 
         # Sprinting
         if self.game.keymap.map["sprint"]:
-            self.speed = self.default_speed * 1.5
+            self.speed = self.sprint_speed
             self.queued_animation = "run"
         else:
             self.speed = self.default_speed
@@ -61,7 +70,7 @@ class Player(Actor):
         #
         if direction is "forward":
             # self.setPos(self, (0, ((1 * self.speed) * dt), 0))
-            self.velocity[1] += self.speed
+            self.velocity[1] += self.acceleration[1]
             return
 
         #
@@ -73,7 +82,7 @@ class Player(Actor):
         #
         if direction is "backward":
             # self.setPos(self, (0, -((1 * self.speed) * dt), 0))
-            self.velocity[1] -= self.speed
+            self.velocity[1] -= self.acceleration[1]
             return
 
         #
@@ -109,45 +118,31 @@ class Player(Actor):
         self.setZ(self, self.velocity[2] * dt)
 
         for x in range(len(self.velocity)):
-            # Check velocity
+            # Max velocity check
             if abs(self.velocity[x]) > self.max_velocity:
                 if self.velocity[x] < 0:
                     self.velocity[x] = -self.max_velocity
                 if self.velocity[x] > 0:
                     self.velocity[x] = self.max_velocity
 
-            # Reduce velocity
-            # if self.velocity[x] != 0:
-            #     if x != 2:
-            #         if self.velocity[x] < 0:
-            #             self.velocity[x] += self.speed / 1.8
-            #         if self.velocity[x] > 0:
-            #             self.velocity[x] -=  self.speed / 1.8
-            #     else:
-            #         if self.velocity[x] < 0:
-            #             self.velocity[x] += self.jump_height / 1.8
-            #         if self.velocity[x] > 0:
-            #             self.velocity[x] -= self.jump_height / 1.8
-
-            # Reduce velocity[x] by the values highest evenly divisible number,
-            # so that velocity[x] always returns to 0
             if self.velocity[x] != 0:
                 if x != 2:
                     if self.velocity[x] < 0:
-                        self.velocity[x] += 0.01
+                        self.velocity[x] += self.friction[x]
 
                     if self.velocity[x] > 0:
-                        self.velocity[x] -= 0.01
+                        self.velocity[x] -= self.friction[x]
                 else:
                     if self.velocity[x] < 0:
-                        self.velocity[x] -= 0.01
+                        self.velocity[x] += self.friction[x]
 
                     if self.velocity[x] > 0:
-                        self.velocity[x] -= 0.01
+                        self.velocity[x] -= self.friction[x]
 
             self.velocity[x] = round(self.velocity[x], 2)
 
         print(self.velocity)
+        print(tuple([round(i, 2) for i in tuple(self.getPos())]))
 
         return task.cont
 

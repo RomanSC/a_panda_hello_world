@@ -2,6 +2,7 @@
 """ physics.py | Wed, Jan 03, 2018 | Roman S. Collins
 """
 from config import *
+from constants import *
 from helpers import *
 
 from panda3d.core import Vec3

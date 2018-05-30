@@ -1,5 +1,3 @@
-
-
 # This is the config file used to configure basic settings for Panda3D.
 # The pipeline loads it at startup to ensure the environment is setup properly.
 

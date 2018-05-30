@@ -1,4 +1,4 @@
-#!/home/roman/code/games/panda3d/a-panda-hello-world/env/bin/python
+#!/home/roman/code/games/panda3d/a_panda_hello_world/env/bin/python
 # See http://cens.ioc.ee/projects/f2py2e/
 from __future__ import division, print_function
 
