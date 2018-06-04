@@ -1,4 +1,4 @@
- #!/usr/bin/python3
+#!/usr/bin/python3
 """ a_panda_hello_world.py | Roman S. Collins | Mon, Dec 18, 2017
 
     Following along to "A Panda3D Hello World Tutorial" from the Panda3D
@@ -16,9 +16,16 @@ import sys
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import loadPrcFileData
 from panda3d.core import loadPrcFileData
+
 loadPrcFileData("", "sync-video false")
 loadPrcFileData("", "sync-video #t")
 loadPrcFileData("", "depth-bits 24")
+
+# loadPrcFileData('', 'framebuffer-stencil 0')
+# loadPrcFileData('', 'compressed-textures 0')
+# loadPrcFileData('', 'show-buffers 0')
+# loadPrcFileData('', 'basic-shaders-only 1')
+
 from panda3d.core import Vec3
 from panda3d.core import Point3
 from panda3d.core import Material
@@ -89,11 +96,12 @@ class Game(ShowBase):
         self.ground_object.setScale(1, 1, 1)
         self.ground_object.setPos(0, 0, 0)
 
-        self.ground_material = Material()
-        self.ground_material.setShininess(0.0)
-        self.ground_material.setAmbient((0.0, 0.0, 1.0, 1.0))
-        self.ground_material.setDiffuse((0.2, 0.7, 0.2, 1.0))
-        self.ground_object.setMaterial(self.ground_material)
+        # Material overrides setColor()
+        # self.ground_material = Material()
+        # self.ground_material.setShininess(0.0)
+        # self.ground_material.setAmbient((0.0, 0.0, 1.0, 1.0))
+        # self.ground_material.setDiffuse((0.2, 0.7, 0.2, 1.0))
+        # self.ground_object.setMaterial(self.ground_material)
 
         # Always last
         self.ground_object.reparentTo(self.render)

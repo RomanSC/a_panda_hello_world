@@ -22,7 +22,7 @@ class CollisionController:
         self.game = game
 
         self.traverser = CollisionTraverser('collision traverser')
-        # self.traverser.showCollisions(self.game.render)
+        self.traverser.showCollisions(self.game.render)
 
         # Attempt with CollisionHandlerFloor
 
@@ -30,7 +30,7 @@ class CollisionController:
         # self.player_ray = CollisionRay(*self.game.player.getPos(), 0.0, 0.0, -1.0)
 
         # self.player_from_object = self.game.player.attachNewNode(CollisionNode("player collision node"))
-        # self.player_from_object.node().addSolid(CollisionRay(0.0, 0.0, 1.0, 
+        # self.player_from_object.node().addSolid(CollisionRay(0.0, 0.0, 1.0,
         #                                                      0.0, 0.0, -1.0))
         # self.lifter = CollisionHandlerFloor()
         # self.lifter.addCollider(self.player_from_object, self.game.player)
@@ -57,17 +57,13 @@ class CollisionController:
 
     def update(self, task):
         self.traverser.traverse(self.game.render)
-        # self.player_col_node.show()
+        self.player_col_node.show()
 
         entries = list(self.ground_col_handler.getEntries())
         entries.sort(key=lambda x: x.getSurfacePoint(self.game.render).getZ())
 
-        if len(entries) > 0:
+        print(entries)
+        if len(entries) > 0 and "terrain" in entries:
             self.game.player.setZ(entries[0].getSurfacePoint(self.game.render).getZ())
-            # if self.game.player.getZ() < entries[0].getSurfacePoint(self.game.render).getZ():
-            #     self.game.player.setZ(entries[0].getSurfacePoint(self.game.render).getZ())
-
-            # if self.game.player.getZ() > entries[0].getSurfacePoint(self.game.render).getZ():
-            #     self.game.player.velocity[2] -= self.game.player.jump_height / 4
 
         return task.cont

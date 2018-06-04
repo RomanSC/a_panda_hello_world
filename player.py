@@ -6,8 +6,11 @@ from constants import *
 from helpers import *
 
 from numpy import arange
+from math import sqrt
 from direct.actor.Actor import Actor
 from panda3d.core import Material
+# from panda3d.core import TextureStage
+# from panda3d.core import TexGenAttrib
 from location import Location
 from physics import Gravity
 
@@ -18,22 +21,27 @@ class Player(Actor):
 
         self.scale = 1
 
-        self.start_pos = (0.0, 0.0, 0.0)
+        self.start_pos = (0.0, 2000.0, 0.0)
         self.start_hpr = (0.0, 0.0, 0.0)
 
-        self.default_speed = 5.0
+        self.default_speed = 30.0
         self.speed = self.default_speed
-        self.sprint_speed = 11.0
+        self.sprint_speed = 90.0
         self.jump_height = 8.0
 
         # TODO:
         # Check variable names for clarity via research
-        self.max_velocity = 14.0
+        self.max_velocity = 100
         self.velocity = [0.0, 0.0, 0.0]
         self.acceleration = [self.speed, self.speed, self.speed]
-        self.friction = [2.0, 2.0, 2.0]
+        # self.friction = None
 
         self.loadModel("assets/models/figures/man/man.egg")
+        # self.loadModel("assets/models/figures/textures/h.png")
+        # self.setTexGen(TextureStage.getDefault(), TexGenAttrib.MWorldPosition)
+        # self.setTexProjector(TextureStage.getDefault(), self.game.render, self)
+        # self.setTexPos(TextureStage.getDefault(), 0.44, 0.5, 0.2)
+        # self.setTexScale(TextureStage.getDefault(), 0.2)
         self.loadAnims({"walk": "assets/models/figures/man/man-walk.egg",
                         "run": "assets/models/figures/man/man-run.egg",
                         "jump": "assets/models/figures/man/man-jump.egg",
@@ -46,7 +54,7 @@ class Player(Actor):
         self.material = Material()
         self.setMaterial(self.material)
 
-        self.setColor((1, 0, 0, 1), 1)
+        self.setColor((1.0, 0, 0, 1), 1)
         self.setScale(self.scale)
 
         self.setPos(*self.start_pos)
@@ -76,7 +84,7 @@ class Player(Actor):
         #
         if direction is "left":
             # self.setPos(self, (-((1 * self.speed) * dt), 0, 0))
-            self.setHpr(self, (((1 * self.speed) * 10 * dt), 0 ,0))
+            self.setHpr(self, (((1 * self.speed) * 2 * dt), 0, 0))
             return
 
         #
@@ -88,7 +96,7 @@ class Player(Actor):
         #
         if direction is "right":
             # self.setPos(self, (((1 * self.speed) * dt), 0, 0))
-            self.setHpr(self, (-((1 * self.speed) * 10 * dt), 0, 0))
+            self.setHpr(self, (-((1 * self.speed) * 2 * dt), 0, 0))
             return
 
     # def jump(self):
@@ -124,20 +132,29 @@ class Player(Actor):
                     self.velocity[x] = -self.max_velocity
                 if self.velocity[x] > 0:
                     self.velocity[x] = self.max_velocity
+            # Stop check
+            if self.velocity[x] < 1 and self.velocity[x] > -1:
+                self.velocity[x] = 0.0
 
             if self.velocity[x] != 0:
                 if x != 2:
                     if self.velocity[x] < 0:
-                        self.velocity[x] += self.friction[x]
+                        try:
+                            self.velocity[x] += sqrt(self.velocity[x])
+                        except ValueError:
+                            pass
 
                     if self.velocity[x] > 0:
-                        self.velocity[x] -= self.friction[x]
+                        try:
+                            self.velocity[x] -= sqrt(self.velocity[x])
+                        except ValueError:
+                            pass
                 else:
-                    if self.velocity[x] < 0:
-                        self.velocity[x] += self.friction[x]
-
                     if self.velocity[x] > 0:
-                        self.velocity[x] -= self.friction[x]
+                        try:
+                            self.velocity[x] -= sqrt(self.velocity[x])
+                        except ValueError:
+                            pass
 
             self.velocity[x] = round(self.velocity[x], 2)
 
